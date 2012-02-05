@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
 require 'serienrenamer/episode.rb'
 
-class TestSerienrenamer < Test::Unit::TestCase
+class TestEpisode < Test::Unit::TestCase
 
     @@valid_filenames = [
         'Chuck.S01E01.Dies.ist.ein.Test.German.Dubbed.avi',
