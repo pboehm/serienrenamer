@@ -2,7 +2,8 @@ require 'find'
 
 class Serienrenamer::Episode
 
-    attr_reader :series, :season, :episode, :episodename, :extension
+    attr_reader :series, :season, :episode, :episodename, 
+        :extension, :episodepath, :success
     attr_accessor :episodename_needed
 
     # patterns for suitable episodes  
@@ -47,6 +48,8 @@ class Serienrenamer::Episode
             raise ArgumentError, 'Not an episode'
         end
 
+        @episodepath = episodepath
+
         # extract information from filename
         pattern = @@PATTERNS.select { |p| ! basepath.match(p).nil? }[0]
         raise ArgumentError, 'no suitable pattern found, no episode ?' unless pattern
@@ -63,6 +66,7 @@ class Serienrenamer::Episode
         # setting up special behaviour
         @episodename_needed=episodename_needed
         @extension=File.extname(episodepath).gsub('.','')
+        @success=false
     end
 
     # Returns the episode information into a format like
@@ -73,6 +77,21 @@ class Serienrenamer::Episode
             return "S%.2dE%.2d - %s.%s" % [ @season, @episode, @episodename, @extension ]
         else
             return "S%.2dE%.2d.%s" % [ @season, @episode, @extension ]
+        end
+    end
+
+    # renames the given episodefile into the new 
+    # clean format and sets the status on success
+    def rename(destination_dir=".")
+        raise IOError, 'episode file not existing' unless File.file?(@episodepath)
+        destination_file = File.join(destination_dir, self.to_s)
+        raise IOError, 'destination file already existing' if File.file?(destination_file)
+
+        begin
+            File.rename(@episodepath, destination_file)
+            @success = true 
+        rescue SystemCallError => e
+            puts "Rename failed: #{e}"
         end
     end
 

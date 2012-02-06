@@ -14,6 +14,8 @@ class TestEpisode < Test::Unit::TestCase
     ]
 
     def setup
+        system('rm -r test/testfiles/*')
+
         @@valid_filenames.each { |f|
             FileUtils.touch f unless File.file?(f)
         }
@@ -45,6 +47,13 @@ class TestEpisode < Test::Unit::TestCase
     def test_videofile_determination
         @@valid_filenames.each { |f| 
             assert_not_nil(Serienrenamer::Episode.determine_video_file(f))
-        }    
+        }
+    end
+
+    def test_episode_rename
+        epi = Serienrenamer::Episode.new(@@valid_filenames[0]) 
+        epi.rename('test/testfiles/')
+        assert_equal(true, epi.success)
+        exit
     end
 end
