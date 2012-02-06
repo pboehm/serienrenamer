@@ -1,6 +1,6 @@
 = serienrenamer
 
-* http://github.com/phboehm/serienrenamer
+* http://github.com/pboehm/serienrenamer
 
 == DESCRIPTION:
 
@@ -9,7 +9,8 @@ like "S01E01 - Episodename.avi"
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* extract information from episode files in various formats
+* clean these information and bring that into a recommended format
 
 == SYNOPSIS:
 
