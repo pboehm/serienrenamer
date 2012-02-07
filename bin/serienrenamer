@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+# -*- ruby -*-
+# encoding: UTF-8
+
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+
+require 'serienrenamer'
+require 'optparse'
+require 'fileutils'
+
+###
+# Option definition and handling
+options = {}
+opts = OptionParser.new("Usage: #{$0} [OPTIONS] DIR")
+opts.separator("  Ruby Script that brings your series into an")
+opts.separator("  appropriate format like 'S01E01 - Episodename.avi'")
+opts.separator("")
+opts.separator("  Options:")
+
+opts.separator("")
+opts.separator("  Arguments:")
+opts.separator("     DIR      The path that includes the episodes")
+opts.separator("              defaults to ~/Downloads")
+opts.separator("")
+
+rest = opts.permute(ARGV)
+
+episode_directory = rest.pop || File.join( File.expand_path('~'), "Downloads" )
+
+fail "'#{episode_directory}' does not exist or is not a directory" unless
+    Dir.exists?(episode_directory)
+
+Dir.chdir(episode_directory)
+
+# Iterate through all directory entries
+for entry in Dir.new('.').each do
+
+    next if entry.match(/^\./)
+    next unless Serienrenamer::Episode.determine_video_file(entry)
+    next unless Serienrenamer::Episode.contains_episode_information?(entry)
+
+    puts "<<< #{entry}"
+
+    epi = Serienrenamer::Episode.new(entry)
+    puts ">>> #{epi.to_s}"
+
+    puts ""
+end
