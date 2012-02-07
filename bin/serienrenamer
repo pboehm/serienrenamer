@@ -5,6 +5,7 @@
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'serienrenamer'
+require 'plugin'
 require 'optparse'
 require 'fileutils'
 
@@ -25,6 +26,17 @@ opts.separator("")
 
 rest = opts.permute(ARGV)
 
+###
+# Load plugins
+puts "Loading Plugins"
+Dir[File.join(File.dirname(__FILE__),"../lib/plugins/*.rb")].each do |plugin|
+	load plugin
+end
+
+puts "Plugins loaded: #{Plugin.registered_plugins.inspect}"
+
+###
+# cycle all episodes
 episode_directory = rest.pop || File.join( File.expand_path('~'), "Downloads" )
 
 fail "'#{episode_directory}' does not exist or is not a directory" unless
@@ -42,6 +54,11 @@ for entry in Dir.new('.').each do
     puts "<<< #{entry}"
 
     epi = Serienrenamer::Episode.new(entry)
+
+    Plugin.registered_plugins.each do |plugin|  
+        plugin.generate_episode_information(epi)
+    end
+
     puts ">>> #{epi.to_s}"
 
     puts ""
