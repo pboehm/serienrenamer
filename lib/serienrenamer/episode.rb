@@ -1,4 +1,5 @@
 require 'find'
+require 'fileutils'
 
 class Serienrenamer::Episode
 
@@ -34,23 +35,33 @@ class Serienrenamer::Episode
     # that it can.
     def initialize(episodepath, episodename_needed=true)
 
+        # make some checks on the given episode path
         unless File.exists?(episodepath) || Dir.exists?(episodepath)
             raise ArgumentError, "episodepath not existing"
         end
 
+        unless Serienrenamer::Episode.determine_video_file(episodepath)
+            raise ArgumentError, 'no videofile found'
+        end
+
+        @source_directory = nil
+
+        # normalize information for dirs/files
         basepath = File.basename(episodepath)
 
         if File.file?(episodepath)
             basepath = basepath.chomp(File.extname(basepath))
+        elsif File.directory?(episodepath)
+            @source_directory = episodepath
         end
 
         unless Serienrenamer::Episode.contains_episode_information?(basepath)
-            raise ArgumentError, 'Not an episode'
+            raise ArgumentError, 'no episode information existing'
         end
 
-        @episodepath = episodepath
+        @episodepath = Serienrenamer::Episode.determine_video_file(episodepath)
 
-        # extract information from filename
+        # extract information from basepath
         pattern = @@PATTERNS.select { |p| ! basepath.match(p).nil? }[0]
         raise ArgumentError, 'no suitable pattern found, no episode ?' unless pattern
 
@@ -58,14 +69,14 @@ class Serienrenamer::Episode
         raise ArgumentError, 'suitable pattern does not match the file' unless infos
 
         @series = Serienrenamer::Episode.clean_episode_data(infos[:series]).strip
-        @episodename = Serienrenamer::Episode.clean_episode_data(infos[:episodename], true).strip
+        @episodename = Serienrenamer::Episode.clean_episode_data(
+            infos[:episodename], true).strip
         @season = infos[:season].to_i
         @episode = infos[:episode].to_i
 
-        ###
         # setting up special behaviour
         @episodename_needed=episodename_needed
-        @extension=File.extname(episodepath).gsub('.','')
+        @extension=File.extname(@episodepath).gsub('.','')
         @success=false
     end
 
@@ -89,6 +100,11 @@ class Serienrenamer::Episode
 
         begin
             File.rename(@episodepath, destination_file)
+
+            if @source_directory
+                FileUtils.remove_dir(@source_directory)
+            end
+
             @success = true
         rescue SystemCallError => e
             puts "Rename failed: #{e}"
@@ -106,7 +122,7 @@ class Serienrenamer::Episode
 
         # if this feature is enabled than all trash words
         # are removed from the string. If two trashwords
-        # occur than all trailing wirds will be removed.
+        # occur than all trailing words will be removed.
         # if a word is removed and the next is not a trash
         # word than the removed word will be included
         if include_trashwords

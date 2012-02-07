@@ -16,11 +16,22 @@ class TestEpisode < Test::Unit::TestCase
         'legaltrash' =>'test/testfiles/flpo.404.Die.German.Erinnerungen.German.Dubbed.WEB-DL.XViD.avi',
     }
 
+    @@valid_directories = {
+        'chuck'  => 'test/testfiles/Chuck.S01E01.Testepisode.German.Dubbed.BLURAYRiP',
+        'chuck1'  => 'test/testfiles/Chuck.101.First.Episode.German.Dubbed.BLURAYRiP',
+        'chuck2'  => 'test/testfiles/chuck.2x12',
+    }
+
     def setup
         system('rm -r test/testfiles/*')
 
         @@valid_filenames.each { |n,f|
             FileUtils.touch f unless File.file?(f)
+        }
+
+        @@valid_directories.each { |n,d|
+            FileUtils.mkdir(d)
+            FileUtils.touch(File.join(d, 'episode.avi'))
         }
     end
 
@@ -31,11 +42,16 @@ class TestEpisode < Test::Unit::TestCase
                 Serienrenamer::Episode.contains_episode_information?(file))
         }
 
+        @@valid_directories.each { |name,dir|
+            assert_equal(true,
+                Serienrenamer::Episode.contains_episode_information?(dir))
+        }
+
         assert_equal(false,
                 Serienrenamer::Episode.contains_episode_information?('video.flv'))
     end
 
-    def test_episode_information_extraction
+    def test_episode_information_extraction_from_file
 
         assert_raise(ArgumentError) { Serienrenamer::Episode.new('video.flv')}
 
@@ -57,15 +73,40 @@ class TestEpisode < Test::Unit::TestCase
         assert_equal("S04E04 - Die German Erinnerungen.avi", legaltrash.to_s)
     end
 
+    def test_episode_information_extraction_from_directory
+
+        chuck = Serienrenamer::Episode.new(@@valid_directories["chuck"])
+        assert_equal("S01E01 - Testepisode.avi", chuck.to_s)
+
+        chuck1 = Serienrenamer::Episode.new(@@valid_directories["chuck1"])
+        assert_equal("S01E01 - First Episode.avi", chuck1.to_s)
+
+        chuck2 = Serienrenamer::Episode.new(@@valid_directories["chuck2"])
+        chuck2.episodename_needed=false
+        assert_equal("S02E12.avi", chuck2.to_s)
+    end
+
     def test_videofile_determination
         @@valid_filenames.each { |n,f|
             assert_not_nil(Serienrenamer::Episode.determine_video_file(f))
         }
+
+        @@valid_directories.each { |n,d|
+            assert_not_nil(Serienrenamer::Episode.determine_video_file(d))
+        }
     end
 
-    def test_episode_rename
+    def test_episode_rename_file
         epi = Serienrenamer::Episode.new(@@valid_filenames["chuckfull"])
         epi.rename('test/testfiles/')
         assert_equal(true, epi.success)
+    end
+
+    def test_episode_rename_from_directory
+        @@valid_directories.each do |n,d|
+            epi = Serienrenamer::Episode.new(d)
+            epi.rename('test/testfiles/')
+            assert_equal(true, epi.success)
+        end
     end
 end
