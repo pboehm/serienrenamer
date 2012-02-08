@@ -27,7 +27,7 @@ class Serienrenamer::Episode
         iNTERNAL CRoW MSE c0nFuSed UTOPiA scum EXPiRED BDRiP
         iTunesHD 720p x264 h264 CRiSP euHD WEBRiP ZZGtv ARCHiV
         Prim3time Nfo Repack SiMPTY BLURAYRiP BluRay DELiCiOUS
-        UNDELiCiOUS fBi CiD iTunesHDRip RedSeven OiNK idTV
+        UNDELiCiOUS fBi CiD iTunesHDRip RedSeven OiNK idTV DL DD51
     )
 
     # Constructor for the Episode-Class, which takes an episode as
@@ -106,6 +106,8 @@ class Serienrenamer::Episode
     #           if false the string will applied without any
     #           checks or cleanup
     def add_episodename(data, need_extraction_clean=true)
+        return unless data
+
         if need_extraction_clean
             if Serienrenamer::Episode.contains_episode_information?(data)
                 pattern = @@PATTERNS.select { |p| ! data.match(p).nil? }[0]

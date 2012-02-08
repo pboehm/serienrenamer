@@ -1,3 +1,5 @@
 require 'stringio'
 require 'test/unit'
 require File.dirname(__FILE__) + '/../lib/serienrenamer'
+require File.dirname(__FILE__) + '/../lib/plugin.rb'
+require File.dirname(__FILE__) + '/../lib/plugins/serienjunkies_feed.rb'
