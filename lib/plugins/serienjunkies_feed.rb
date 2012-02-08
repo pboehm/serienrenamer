@@ -33,8 +33,6 @@ class SeriejunkiesOrgFeed < Plugin
         end
 
         episode_definition = 'S%.2dE%.2d' % [ episode.season, episode.episode ]
-        p episode_definition
-        p episode.series
 
         # search for all items that match the definition
         # and save them uniquely in an array
