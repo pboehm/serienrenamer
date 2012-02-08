@@ -12,7 +12,7 @@ class Serienrenamer::Episode
         # S01E01
         /^(?<series>.*)S(?<season>\d+)E(?<episode>\d+)(?<episodename>.*)$/i,
         # 101; 1212
-        /^(?<series>.*\D)(?<season>\d+)(?<episode>\d{2})(?<episodename>\D.*)$/,
+        /^(?<series>.*\D)(?<season>\d+)(?<episode>\d{2})(?<episodename>\W.*)$/,
         # 1x1; 12x12
         /^(?<series>.*)(?<season>\d+)x(?<episode>\d+)(?<episodename>.*)$/,
     ]
@@ -34,6 +34,8 @@ class Serienrenamer::Episode
     # argument and extracts as much as information from the file
     # that it can.
     def initialize(episodepath, episodename_needed=true)
+
+        raise ArgumentError, 'no episodepath provided' unless episodepath
 
         # make some checks on the given episode path
         unless File.exists?(episodepath) || Dir.exists?(episodepath)
@@ -91,8 +93,35 @@ class Serienrenamer::Episode
         end
     end
 
+    # this method makes it possible to set the episodename
+    # afterwards
+    #
+    # options:
+    #   :data
+    #           string that contains epissodename information
+    #   :need_extraction_clean
+    #           if true than it will apply the standard regex
+    #           to clean the string and and extracts that with
+    #           the standard patterns
+    #           if false the string will applied without any
+    #           checks or cleanup
+    def add_episodename(data, need_extraction_clean=true)
+        if need_extraction_clean
+            if Serienrenamer::Episode.contains_episode_information?(data)
+                pattern = @@PATTERNS.select { |p| ! data.match(p).nil? }[0]
+                infos = pattern.match(data)
+                if infos
+                    data = infos[:episodename]
+                end
+            end
+            data = Serienrenamer::Episode.clean_episode_data(data, true).strip
+        end
+        @episodename = data
+    end
+
     # renames the given episodefile into the new
     # clean format and sets the status on success
+    #
     def rename(destination_dir=".")
         raise IOError, 'episode file not existing' unless File.file?(@episodepath)
         destination_file = File.join(destination_dir, self.to_s)
@@ -119,6 +148,7 @@ class Serienrenamer::Episode
     # episode files like dots (.) and trash words
     def self.clean_episode_data(data, include_trashwords=false)
         data.gsub!(/\./, " ")
+        data.gsub!(/\-/, " ")
 
         # if this feature is enabled than all trash words
         # are removed from the string. If two trashwords
@@ -132,7 +162,7 @@ class Serienrenamer::Episode
 
             for word in data.split(/ /) do
 
-                if @@TRASH_WORDS.include?(word)
+                if ! @@TRASH_WORDS.grep(/#{word}/i).empty?
                     purge_count += 1
                     last_purge = word
 

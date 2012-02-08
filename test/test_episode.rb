@@ -11,6 +11,7 @@ class TestEpisode < Test::Unit::TestCase
         'chuck2' => 'test/testfiles/chuck.1212.hdtv-lol.avi',
         'chuck3' => 'test/testfiles/chuck.5x12.hdtv-lol.avi',
         'without'=> 'test/testfiles/5x12.avi',
+        'royal'  => 'test/testfiles/Royal.Pains.S02E10.Beziehungsbeschwerden.GERMAN.DUBBED.DVDRiP.XviD-SOF.avi',
         'flpo'   => 'test/testfiles/Flashpoint.S04E04.Getruebte.Erinnerungen.German.Dubbed.WEB-DL.XViD.avi',
         'csiny'  => 'test/testfiles/sof-csi.ny.s07e20.avi',
         'legaltrash' =>'test/testfiles/flpo.404.Die.German.Erinnerungen.German.Dubbed.WEB-DL.XViD.avi',
@@ -71,6 +72,9 @@ class TestEpisode < Test::Unit::TestCase
 
         legaltrash = Serienrenamer::Episode.new(@@valid_filenames["legaltrash"])
         assert_equal("S04E04 - Die German Erinnerungen.avi", legaltrash.to_s)
+
+        royal = Serienrenamer::Episode.new(@@valid_filenames["royal"])
+        assert_equal("S02E10 - Beziehungsbeschwerden.avi", royal.to_s)
     end
 
     def test_episode_information_extraction_from_directory
@@ -84,6 +88,17 @@ class TestEpisode < Test::Unit::TestCase
         chuck2 = Serienrenamer::Episode.new(@@valid_directories["chuck2"])
         chuck2.episodename_needed=false
         assert_equal("S02E12.avi", chuck2.to_s)
+    end
+
+    def test_adding_episodename_afterwards
+
+        csiny = Serienrenamer::Episode.new(@@valid_filenames["csiny"])
+        csiny.add_episodename('Dies ist nachträglich eingefügt', false)
+        assert_equal("S07E20 - Dies ist nachträglich eingefügt.avi", csiny.to_s)
+
+        chuck = Serienrenamer::Episode.new(@@valid_directories["chuck"])
+        chuck.add_episodename('Chuck.S01E01.First.Episode.GERMAN.DUBBED.DL.720p.HDTV.x264-euHD', true)
+        assert_equal("S01E01 - First Episode.avi", chuck.to_s)
     end
 
     def test_videofile_determination
