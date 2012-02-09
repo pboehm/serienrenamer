@@ -4,7 +4,7 @@ require 'fileutils'
 class Serienrenamer::Episode
 
     attr_reader :series, :season, :episode, :episodename,
-        :extension, :episodepath, :success
+        :extension, :episodepath, :success, :source_directory
     attr_accessor :episodename_needed
 
     # patterns for suitable episodes
@@ -12,7 +12,7 @@ class Serienrenamer::Episode
         # S01E01
         /^(?<series>.*)S(?<season>\d+)E(?<episode>\d+)(?<episodename>.*)$/i,
         # 101; 1212
-        /^(?<series>.*\D)(?<season>\d+)(?<episode>\d{2})(?<episodename>\W.*)$/,
+        /^(?<series>.*\D)(?<season>\d+)(?<episode>\d{2})(?<episodename>\W*.*)$/,
         # 1x1; 12x12
         /^(?<series>.*)(?<season>\d+)x(?<episode>\d+)(?<episodename>.*)$/,
     ]
