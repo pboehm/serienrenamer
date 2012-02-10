@@ -11,21 +11,30 @@ class TextfileEpisodeInfo < Plugin
     PRIORITY=100
 
     # this method will be called from the main program
-    # with an Serienrenamer::Episode instance as parameter
+    # with an Serienrenamer::Episode instance or a path
+    # to to a directory as parameter
     #
     # it returns an array of episode information
     def self.generate_episode_information(episode)
 
-        raise ArgumentError, "Serienrenamer::Episode instance needed" unless
-            episode.is_a?(Serienrenamer::Episode)
+        sourcedir = ""
+        if episode.is_a?(Serienrenamer::Episode)
+            sourcedir = episode.source_directory
+        elsif File.directory?(episode)
+            sourcedir = episode
+        else
+            raise ArgumentError, "Serienrenamer::Episode or Path needed"
+        end
 
         matched_episodes = []
 
-        if episode.source_directory && Dir.exists?(episode.source_directory)
+        if Dir.exists?(sourcedir)
 
-            Dir.new(episode.source_directory).each do |e|
-                file = File.join(episode.source_directory, e)
-                next if File.size(file) > 1024 || File.zero?(file)
+            # search for files that are smaller than 128 Bytes
+            # an check if they contain episode information
+            Dir.new(sourcedir).each do |e|
+                file = File.join(sourcedir, e)
+                next if File.size(file) > 128 || File.zero?(file)
 
                 data = File.open(file, "rb").read
                 if data != nil && data.match(/\w+/) &&
