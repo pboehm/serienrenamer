@@ -1,6 +1,5 @@
 # encoding: UTF-8
 require File.dirname(__FILE__) + '/test_helper.rb'
-require 'serienrenamer/episode.rb'
 
 #
 # test class for the TextfileEpisodeInfo plugin that
