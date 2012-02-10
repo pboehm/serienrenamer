@@ -2,7 +2,7 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
 require 'serienrenamer/episode.rb'
 
-class TestSerienjunkiesFeed < Test::Unit::TestCase
+class TestPluginSerienjunkiesFeed < Test::Unit::TestCase
     @@valid_filenames = {
         'chuck' => 'test/testfiles/chuck.312.hdtv-lol.avi',
         'flpo'   => 'test/testfiles/Flashpoint.S04E04.German.Dubbed.WEB-DL.XViD.avi',

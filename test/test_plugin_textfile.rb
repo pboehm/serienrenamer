@@ -7,7 +7,7 @@ require 'serienrenamer/episode.rb'
 # searches for textfiles with suitable episode
 # information
 #
-class TestTextfileEpisodeInformation < Test::Unit::TestCase
+class TestPluginTextfile < Test::Unit::TestCase
     @@valid_directories = {
         'hmym'  => 'test/testfiles/HMMG.705',
     }
