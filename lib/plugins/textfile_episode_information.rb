@@ -18,17 +18,15 @@ class TextfileEpisodeInfo < Plugin
     def self.generate_episode_information(episode)
 
         sourcedir = ""
-        if episode.is_a?(Serienrenamer::Episode)
+        if episode.is_a?(Serienrenamer::Episode) && episode.source_directory
             sourcedir = episode.source_directory
-        elsif File.directory?(episode)
+        elsif episode.is_a?(String) && File.directory?(episode)
             sourcedir = episode
-        else
-            raise ArgumentError, "Serienrenamer::Episode or Path needed"
         end
 
         matched_episodes = []
 
-        if Dir.exists?(sourcedir)
+        if sourcedir != "" && Dir.exists?(sourcedir)
 
             # search for files that are smaller than 128 Bytes
             # an check if they contain episode information

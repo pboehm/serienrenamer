@@ -55,6 +55,13 @@ class Serienrenamer::Episode
             basepath = basepath.chomp(File.extname(basepath))
         elsif File.directory?(episodepath)
             @source_directory = episodepath
+
+            # if directory does not contain episode information
+            # check for an text file with suitable information
+            unless Serienrenamer::Episode.contains_episode_information?(basepath)
+                info = TextfileEpisodeInfo.generate_episode_information(episodepath)[0]
+                basepath = info if info
+            end
         end
 
         unless Serienrenamer::Episode.contains_episode_information?(basepath)

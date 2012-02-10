@@ -19,8 +19,12 @@ class TestEpisode < Test::Unit::TestCase
 
     @@valid_directories = {
         'chuck'  => 'test/testfiles/Chuck.S01E01.Testepisode.German.Dubbed.BLURAYRiP',
-        'chuck1'  => 'test/testfiles/Chuck.101.First.Episode.German.Dubbed.BLURAYRiP',
-        'chuck2'  => 'test/testfiles/chuck.2x12',
+        'chuck1' => 'test/testfiles/Chuck.101.First.Episode.German.Dubbed.BLURAYRiP',
+        'chuck2' => 'test/testfiles/chuck.2x12',
+    }
+
+    @@invalid_directories = {
+        'tbbt'   => 'test/testfiles/BBTV.16/',
     }
 
     def setup
@@ -31,6 +35,11 @@ class TestEpisode < Test::Unit::TestCase
         }
 
         @@valid_directories.each { |n,d|
+            FileUtils.mkdir(d)
+            FileUtils.touch(File.join(d, 'episode.avi'))
+        }
+
+        @@invalid_directories.each { |n,d|
             FileUtils.mkdir(d)
             FileUtils.touch(File.join(d, 'episode.avi'))
         }
@@ -123,5 +132,19 @@ class TestEpisode < Test::Unit::TestCase
             epi.rename('test/testfiles/')
             assert_equal(true, epi.success)
         end
+    end
+
+    def test_episode_where_dir_has_not_enough_info
+        d = @@invalid_directories["tbbt"]
+
+        filenametxt = File.new(File.join(d, "filename.txt"), "w")
+        filenametxt.write("The.Big.Bang.Theory.S05E16.Sheldon.Revival.HDTV.XviD-LOL")
+        filenametxt.close
+
+        tbbt = Serienrenamer::Episode.new(d)
+        assert_equal("S05E16 - Sheldon Revival.avi", tbbt.to_s)
+
+        tbbt.rename('test/testfiles/')
+        assert_equal(true, tbbt.success)
     end
 end

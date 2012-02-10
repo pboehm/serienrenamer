@@ -47,16 +47,20 @@ fail "'#{episode_directory}' does not exist or is not a directory" unless
 Dir.chdir(episode_directory)
 
 # Iterate through all directory entries
-for entry in Dir.new('.').each do
+for entry in Dir.entries('.').sort do
 
     next if entry.match(/^\./)
     next unless Serienrenamer::Episode.determine_video_file(entry)
-    next unless Serienrenamer::Episode.contains_episode_information?(entry)
 
     puts "<<< #{entry}"
-
-    epi = Serienrenamer::Episode.new(entry)
     
+    begin
+        epi = Serienrenamer::Episode.new(entry)
+    rescue => e
+        puts "Episode object can't be instantiated, will skip this\n"
+        next 
+    end
+
     # if episodename is empty than query plugins
     if epi.episodename.match(/\w+/).nil?
  
