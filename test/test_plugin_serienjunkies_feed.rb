@@ -31,27 +31,27 @@ class TestPluginSerienjunkiesFeed < Test::Unit::TestCase
 
     def test_information_extraction
         simps = Serienrenamer::Episode.new(@@valid_filenames['simps'])
-        data = SeriejunkiesOrgFeed.generate_episode_information(simps)[0]
+        data = Plugin::SerienjunkiesOrgFeed.generate_episode_information(simps)[0]
         simps.add_episodename(data, true)
         assert_equal("S22E16 - Ein Sommernachtstrip.avi", simps.to_s)
 
         flpo = Serienrenamer::Episode.new(@@valid_filenames['flpo'])
-        data = SeriejunkiesOrgFeed.generate_episode_information(flpo)[0]
+        data = Plugin::SerienjunkiesOrgFeed.generate_episode_information(flpo)[0]
         flpo.add_episodename(data, true)
         assert_equal("S04E04 - Getruebte Erinnerungen.avi", flpo.to_s)
 
         big = Serienrenamer::Episode.new(@@valid_filenames['biglove'])
-        data = SeriejunkiesOrgFeed.generate_episode_information(big)[0]
+        data = Plugin::SerienjunkiesOrgFeed.generate_episode_information(big)[0]
         big.add_episodename(data, true)
         assert_equal("S05E06 - Scheidung.avi", big.to_s)
 
         crmi = Serienrenamer::Episode.new(@@valid_filenames['crmi'])
-        data = SeriejunkiesOrgFeed.generate_episode_information(crmi)[0]
+        data = Plugin::SerienjunkiesOrgFeed.generate_episode_information(crmi)[0]
         crmi.add_episodename(data, true)
         assert_equal("S06E22 - Die Dunkelkammer Moerder.avi", crmi.to_s)
 
         two = Serienrenamer::Episode.new(@@valid_filenames['two'])
-        data = SeriejunkiesOrgFeed.generate_episode_information(two)[0]
+        data = Plugin::SerienjunkiesOrgFeed.generate_episode_information(two)[0]
         two.add_episodename(data, true)
         assert_equal("S09E07 - Das Tagebuch.avi", two.to_s)
     end

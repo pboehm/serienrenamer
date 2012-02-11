@@ -1,11 +1,9 @@
-class Plugin
+$:.unshift(File.dirname(__FILE__)) unless
+  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-    class << self; attr_reader :registered_plugins end
-        @registered_plugins = []
+require 'plugin/textfile.rb'
+require 'plugin/serienjunkies_feed.rb'
 
-    # if you inherit from this class, the child
-    # gets added to the "registered plugins" array
-    def self.inherited(child)
-        Plugin.registered_plugins << child
-    end
+module Plugin
+
 end

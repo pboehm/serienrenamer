@@ -29,12 +29,12 @@ rest = opts.permute(ARGV)
 
 ###
 # Load plugins
-Dir[File.join(File.dirname(__FILE__),"../lib/plugins/*.rb")].each do |plugin|
+Dir[File.join(File.dirname(__FILE__),"../lib/plugin/*.rb")].each do |plugin|
 	load plugin
 end
-Plugin.registered_plugins.sort! {|x,y| y::PRIORITY <=> x::PRIORITY }
+Serienrenamer::Pluginbase.registered_plugins.sort! {|x,y| y.priority <=> x.priority }
 
-puts "Plugins loaded: #{Plugin.registered_plugins.inspect}"
+puts "Plugins loaded: #{Serienrenamer::Pluginbase.registered_plugins.inspect}"
 puts ""
 
 ###
@@ -64,13 +64,13 @@ for entry in Dir.entries('.').sort do
     # if episodename is empty than query plugins
     if epi.episodename.match(/\w+/).nil?
  
-        Plugin.registered_plugins.each do |plugin|  
-            next unless plugin::USABLE
+        Serienrenamer::Pluginbase.registered_plugins.each do |plugin|  
+            next unless plugin.usable
 
             epiname = plugin.generate_episode_information(epi)[0]
             next if epiname == nil
 
-            puts "[#{plugin::PLUGIN_NAME}] - #{epiname}"
+            puts "[#{plugin.plugin_name}] - #{epiname}"
 
             epi.add_episodename(epiname, true)
             break

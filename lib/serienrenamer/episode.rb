@@ -61,7 +61,7 @@ module Serienrenamer
                 # if directory does not contain episode information
                 # check for an text file with suitable information
                 unless Episode.contains_episode_information?(basepath)
-                    info = TextfileEpisodeInfo.generate_episode_information(episodepath)[0]
+                    info = Plugin::Textfile.generate_episode_information(episodepath)[0]
                     basepath = info if info
                 end
             end
