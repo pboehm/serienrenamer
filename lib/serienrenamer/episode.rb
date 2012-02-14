@@ -157,7 +157,7 @@ module Serienrenamer
 
         # cleans strings from things that can occur in
         # episode files like dots (.) and trash words
-        def self.clean_episode_data(data, include_trashwords=false)
+        def self.clean_episode_data(data, include_trashwords=false, debug=false)
             data.gsub!(/\./, " ")
             data.gsub!(/\-/, " ")
 
@@ -172,7 +172,11 @@ module Serienrenamer
                 cleanwords = []
 
                 for word in data.split(/ /) do
+                    next unless word.match(/\w+/)
 
+                    puts "TRASH: '%s'" % word if debug
+
+                    # if word is in TRASH_WORDS
                     if ! @@TRASH_WORDS.grep(/#{word}/i).empty?
                         purge_count += 1
                         last_purge = word

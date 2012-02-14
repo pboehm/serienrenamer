@@ -20,6 +20,7 @@ class TestEpisode < Test::Unit::TestCase
         'chuck'  => 'test/testfiles/Chuck.S01E01.Testepisode.German.Dubbed.BLURAYRiP',
         'chuck1' => 'test/testfiles/Chuck.101.First.Episode.German.Dubbed.BLURAYRiP',
         'chuck2' => 'test/testfiles/chuck.2x12',
+        'ncis'   => 'test/testfiles/NCIS.S09E05.Im.sicheren.Hafen.GERMAN.DUBBED.DL.720p.HDTV.x264-euHD',
     }
 
     @@invalid_directories = {
@@ -60,6 +61,13 @@ class TestEpisode < Test::Unit::TestCase
                 Serienrenamer::Episode.contains_episode_information?('video.flv'))
     end
 
+    def test_information_cleanup
+        assert_equal("Im sicheren Hafen", Serienrenamer::Episode.clean_episode_data(
+            ".Im.sicheren.Hafen.GERMAN.DUBBED.DL.720p.HDTV.x264-euHD", true
+        ))
+
+    end
+
     def test_episode_information_extraction_from_file
 
         assert_raise(ArgumentError) { Serienrenamer::Episode.new('video.flv')}
@@ -92,6 +100,9 @@ class TestEpisode < Test::Unit::TestCase
 
         chuck1 = Serienrenamer::Episode.new(@@valid_directories["chuck1"])
         assert_equal("S01E01 - First Episode.avi", chuck1.to_s)
+
+        ncis = Serienrenamer::Episode.new(@@valid_directories["ncis"])
+        assert_equal("S09E05 - Im sicheren Hafen.avi", ncis.to_s)
 
         chuck2 = Serienrenamer::Episode.new(@@valid_directories["chuck2"])
         chuck2.episodename_needed=false
