@@ -136,7 +136,6 @@ module Serienrenamer
         def rename(destination_dir=".")
             raise IOError, 'episode file not existing' unless File.file?(@episodepath)
             destination_file = File.join(destination_dir, self.to_s)
-            raise IOError, 'destination file already existing' if File.file?(destination_file)
 
             begin
                 File.rename(@episodepath, destination_file)
