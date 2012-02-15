@@ -14,6 +14,22 @@ require 'highline/import'
 # Option definition and handling
 options = {}
 opts = OptionParser.new("Usage: #{$0} [OPTIONS] DIR")
+
+opts.on( "-p", "--plugin STRING", String,
+         "use only this plugin") do |opt|
+    options[:plugin] = opt
+end
+
+opts.on( "-s", "--series STRING", String,
+         "series name that will be set for all episodes") do |opt|
+    options[:series] = opt
+end
+
+opts.on( "-i", "--[no-]ignore-filenamedata", 
+         "Always ask plugins for episode information") do |opt|
+    options[:ignore_filenamedata] = opt
+end
+
 opts.separator("  Ruby Script that brings your series into an")
 opts.separator("  appropriate format like 'S01E01 - Episodename.avi'")
 opts.separator("")
@@ -26,7 +42,6 @@ opts.separator("              defaults to ~/Downloads")
 opts.separator("")
 
 rest = opts.permute(ARGV)
-
 ###
 # Load plugins
 Dir[File.join(File.dirname(__FILE__),"../lib/plugin/*.rb")].each do |plugin|
@@ -56,16 +71,22 @@ for entry in Dir.entries('.').sort do
     
     begin
         epi = Serienrenamer::Episode.new(entry)
+        if options[:series]
+            epi.series = options[:series]
+        end
     rescue => e
         puts "Episode object can't be instantiated, will skip this\n"
         next 
     end
 
     # if episodename is empty than query plugins
-    if epi.episodename.match(/\w+/).nil?
+    if epi.episodename.match(/\w+/).nil? || options[:ignore_filenamedata]
  
         Serienrenamer::Pluginbase.registered_plugins.each do |plugin|  
             next unless plugin.usable
+            if options[:plugin]
+                next unless plugin.plugin_name.match(/#{options[:plugin]}/i)
+            end
 
             epiname = plugin.generate_episode_information(epi)[0]
             next if epiname == nil

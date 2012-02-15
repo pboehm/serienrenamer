@@ -1,4 +1,6 @@
 # encoding: UTF-8
+require 'media_wiki'
+
 module Plugin
 
     # This Plugin tries to extract the series
