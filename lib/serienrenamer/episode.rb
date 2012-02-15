@@ -5,9 +5,9 @@ module Serienrenamer
 
     class Episode
 
-        attr_reader :series, :season, :episode, :episodename,
+        attr_reader :season, :episode, :episodename,
             :extension, :episodepath, :success, :source_directory
-        attr_accessor :episodename_needed
+        attr_accessor :episodename_needed, :series
 
         # patterns for suitable episodes
         @@PATTERNS = [
