@@ -29,7 +29,8 @@ class TestPluginSerienjunkiesFeed < Test::Unit::TestCase
         }
     end
 
-    def test_information_extraction
+    # improve this so that the Plugin uses a local xml file
+    def skip_test_information_extraction
         simps = Serienrenamer::Episode.new(@@valid_filenames['simps'])
         data = Plugin::SerienjunkiesOrgFeed.generate_episode_information(simps)[0]
         simps.add_episodename(data, true)
