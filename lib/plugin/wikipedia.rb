@@ -20,7 +20,10 @@ module Plugin
         @@EPISODE_ENTRY_PATTERN = /\{\{Episodenlisteneintrag/
         @@SERIES_SITE_TEST_PATTERN = /\{\{Infobox.Fernsehsendung.*\}\}/m
         @@DISAMBIGUATION_TEST_PATTERN = /\{\{Begriffsklärung\}\}/m
-        @@CONTAINS_LINK_TO_EPISODE_LIST = /\{\{Hauptartikel\|(?<main>Liste.*)\}\}/
+        @@CONTAINS_LINK_TO_EPISODE_LIST = /Hauptartikel.*(?<main>Liste.*?)[\]\}]+/
+        @@CONTAINS_INARTICLE_EPISODE_LIST = /\<div.*\>Staffel.(\d+).*\<\/div\>.*class=\"wikitable\".*titel/m
+        @@INPAGE_SEASON_SEPARATOR = /\<div.style=\"clear:both\;.class=\"NavFrame\"\>/
+        @@WIKITABLE_EXTRACT_PATTERN = /(\{\|.class=\"wikitable\".*\|\})\n/m
 
         # this method will be called from the main program
         # with an Serienrenamer::Episode instance as parameter
@@ -59,11 +62,18 @@ module Plugin
                     mainarticle = pagedata.match(@@CONTAINS_LINK_TO_EPISODE_LIST)[:main]
                     if mainarticle
                         episodelist_page = wiki.get(mainarticle)
-                        series = parse_page_data(episodelist_page)
+                        series = parse_episodelist_page_data(episodelist_page)
+
                         @cached_data[episode.series] = series
                     end
+
+                elsif contains_inarticle_episode_list?(pagedata)
+                    series = parse_inarticle_episodelist_page_data(pagedata)
+                    @cached_data[episode.series] = series
+
                 else
-                    raise RuntimeError, "In article episodelists not yet implemented"
+                    warn "no episode list found"
+                    return []
                 end
             end
 
@@ -84,11 +94,11 @@ module Plugin
         end
 
         # This method will extract season based information
-        # from a string that contains the MediaWiki pagedata
+        # from a string that contains a wikipedia episodelist page
         #
         # returns an Array of Arrays with episode information
         # where episode and season numbers are the indizes
-        def self.parse_page_data(pagedata, debug=false)
+        def self.parse_episodelist_page_data(pagedata, debug=false)
             raise ArgumentError, 'String with pagedata expected' unless
                 pagedata.is_a?(String)
 
@@ -182,6 +192,125 @@ module Plugin
             return season_data
         end
 
+        # This method will extract season based information
+        # from a string that contains a series page with an
+        # episodelist included
+        #
+        # returns an Array of Arrays with episode information
+        # where episode and season numbers are the indizes
+        def self.parse_inarticle_episodelist_page_data(pagedata, debug=false)
+            raise ArgumentError, 'String with pagedata expected' unless
+                pagedata.is_a?(String)
+
+            series_data = []
+
+            # look for a paragraph with an episodelist
+            episodelist_paragraph = pagedata.split(/==.*==/).select { |p|
+                contains_inarticle_episode_list?(p) }[0]
+
+            raise ArgumentError, 'no episodelist found' unless episodelist_paragraph
+
+            # iterate through all seasons in this episode table
+            episodelist_paragraph.split(@@INPAGE_SEASON_SEPARATOR).each do |season|
+                next unless contains_inarticle_episode_list?(season)
+
+                season_nr = season.match(@@CONTAINS_INARTICLE_EPISODE_LIST)[1].to_i
+
+                wikitable = season.match(@@WIKITABLE_EXTRACT_PATTERN)[1]
+                episodes = parse_inarticle_season_table(wikitable)
+
+                # HACK if a season is splitted into different parts
+                # eg. Flashpoint (2.1 and 2.2) than merge that if possible
+                if series_data[season_nr] != nil
+                    series_data[season_nr].each_with_index do |item, index|
+                        episodes[index] = item unless episodes[index]
+                    end
+                end
+
+                series_data[season_nr] = episodes
+            end
+
+            return series_data
+        end
+
+        # this method will be called with a wikitable for a season
+        # as parameter and will extract all episodes from this
+        # and returns that as an array where the episode number is
+        # the index
+        #
+        # Example for an wikitable for episodes:
+        #
+        # {| class="wikitable" width="100%"
+        # |- vertical-align: top; text-align:center; "
+        # | width="15" | '''Nummer''' <br /><small>(Gesamt)<small>
+        # | width="15" | '''Nummer''' <br /><small>(Staffel)<small>
+        # ! width="250" | Originaltitel
+        # ! width="250" | Deutscher Titel
+        # ! width="180" | Erstausstrahlung<br /><small>(USA Network)</small>
+        # ! width="180" | Erstausstrahlung<br /><small>(RTL)</small>
+        # ! width="180" | Erstausstrahlung<br /><small>(SF zwei)</small>
+        # |-
+        # | bgcolor="#DFEEEF"| 01
+        # | 01
+        # | ''Pilot''
+        # | ''Auch Reiche sind nur Menschen''
+        # | 4. Mai 2009
+        # | 17. Mai 2011
+        # | 6. Juni 2011 (Teil 1)<br />13. Juni 2011 (Teil 2)
+        # |-
+        # |}
+        #
+        def self.parse_inarticle_season_table(table)
+            raise ArgumentError, 'String with seasontable expected' unless
+                table.is_a?(String)
+
+            season_data = []
+            episode_nr_line_nr   = nil
+            episode_name_line_nr = nil
+
+            table.split(/^\|\-.*$/).each do |tablerow|
+                tablerow.strip!
+
+                # skip invalid rows
+                lines = tablerow.lines.to_a
+                next unless lines.length >= 4
+
+                if tablerow.match(/width=\"\d+\"/)
+                    # extract line numbers for needed data that
+                    # are in the table header
+                    lines.each_with_index do |item, index|
+                        if item.match(/Nummer.*Staffel/i)
+                            episode_nr_line_nr = index
+
+                        # TODO make the following more variable
+                        elsif item.match(/Deutscher.*Titel/i)
+                            episode_name_line_nr = index
+                        end
+                    end
+                else
+                    # extract episode information
+                    if episode_nr_line_nr && episode_name_line_nr
+
+                        md_nr = lines[episode_nr_line_nr].strip.match(/(\d+)/)
+                        if md_nr
+                            episode_nr = md_nr[1].to_i
+
+                            md_name = lines[episode_name_line_nr].strip.match(/^\|.(.*)$/)
+                            if md_name
+                                episode_name = md_name[1]
+                                episode_name.gsub!(/[\'\"\[\]]/, "")
+                                next unless episode_name.match(/\w+/)
+
+                                season_data[episode_nr] = episode_name.strip
+                            end
+                        end
+                    end
+                end
+            end
+
+            return season_data
+        end
+
         # this method checks if the page is the main page
         # for a series
         #
@@ -203,6 +332,11 @@ module Plugin
         # with an episode list
         def self.contains_link_to_episode_list?(page)
             page.match(@@CONTAINS_LINK_TO_EPISODE_LIST) != nil
+        end
+
+        # test if the page contains a episode list
+        def self.contains_inarticle_episode_list?(page)
+            page.match(@@CONTAINS_INARTICLE_EPISODE_LIST) != nil
         end
     end
 end
