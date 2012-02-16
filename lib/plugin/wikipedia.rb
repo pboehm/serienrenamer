@@ -17,7 +17,7 @@ module Plugin
 
         # patterns used in this class
         @@EPISODE_TABLE_PATTERN = /.*(?<table>\{\{Episodenlistentabelle.*\}\})\s*$/m
-        @@EPISODE_ENTRY_PATTERN = /\{\{Episodenlisteneintrag/
+        @@EPISODE_ENTRY_PATTERN = /\{\{Episodenlisteneintrag|S-Episode/
         @@SERIES_SITE_TEST_PATTERN = /\{\{Infobox.Fernsehsendung.*\}\}/m
         @@DISAMBIGUATION_TEST_PATTERN = /\{\{Begriffsklärung\}\}/m
         @@CONTAINS_LINK_TO_EPISODE_LIST = /Hauptartikel.*(?<main>Liste.*?)[\]\}]+/

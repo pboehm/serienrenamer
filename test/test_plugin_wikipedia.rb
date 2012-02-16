@@ -56,6 +56,9 @@ class TestPluginWikipedia < Test::Unit::TestCase
         seasons = Plugin::Wikipedia.parse_episodelist_page_data(data, true)
 
         assert_equal("Es weihnachtet schwer", seasons[1][1])
+        assert_equal("Bösartige Spiele", seasons[4][5])
+        assert_equal("Homer an der Uni", seasons[5][3])
+        assert_equal("Hochzeit auf Indisch", seasons[9][7])
         assert_equal("G.I. Homer", seasons[18][5])
         assert_equal("Die Farbe Gelb", seasons[21][13])
 
@@ -110,10 +113,10 @@ class TestPluginWikipedia < Test::Unit::TestCase
         two.add_episodename(data, false) if data
         assert_equal("S09E07 - Das Tagebuch.avi", two.to_s)
 
-        #simp = Serienrenamer::Episode.new(@@valid_filenames['simp'])
-        #data = Plugin::Wikipedia.generate_episode_information(simp)[0]
-        #simp.add_episodename(data, false) if data
-        #assert_equal("S09E07 - Hochzeit auf Indisch.avi", simp.to_s)
+        simp = Serienrenamer::Episode.new(@@valid_filenames['simp'])
+        data = Plugin::Wikipedia.generate_episode_information(simp)[0]
+        simp.add_episodename(data, false) if data
+        assert_equal("S09E07 - Hochzeit auf Indisch.avi", simp.to_s)
 
         chuck = Serienrenamer::Episode.new(@@valid_directories['chuck'])
         data = Plugin::Wikipedia.generate_episode_information(chuck)[0]
