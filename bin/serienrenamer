@@ -14,6 +14,10 @@ require 'highline/import'
 # Option definition and handling
 options = {}
 opts = OptionParser.new("Usage: #{$0} [OPTIONS] DIR")
+opts.separator("  Ruby Script that brings your series into an")
+opts.separator("  appropriate format like 'S01E01 - Episodename.avi'")
+opts.separator("")
+opts.separator("  Options:")
 
 opts.on( "-p", "--plugin STRING", String,
          "use only this plugin") do |opt|
@@ -29,11 +33,6 @@ opts.on( "-i", "--[no-]ignore-filenamedata",
          "Always ask plugins for episode information") do |opt|
     options[:ignore_filenamedata] = opt
 end
-
-opts.separator("  Ruby Script that brings your series into an")
-opts.separator("  appropriate format like 'S01E01 - Episodename.avi'")
-opts.separator("")
-opts.separator("  Options:")
 
 opts.separator("")
 opts.separator("  Arguments:")

@@ -1,5 +1,7 @@
+# coding: UTF-8
 require 'find'
 require 'fileutils'
+require 'wlapi'
 
 module Serienrenamer
 
@@ -81,7 +83,7 @@ module Serienrenamer
 
             @series = Episode.clean_episode_data(infos[:series]).strip
             @episodename = Episode.clean_episode_data(
-                infos[:episodename], true).strip
+                infos[:episodename], true, true).strip
             @season = infos[:season].to_i
             @episode = infos[:episode].to_i
 
@@ -125,7 +127,7 @@ module Serienrenamer
                         data = infos[:episodename]
                     end
                 end
-                data = Episode.clean_episode_data(data, true).strip
+                data = Episode.clean_episode_data(data, true, true).strip
             end
             @episodename = data
         end
@@ -156,7 +158,17 @@ module Serienrenamer
 
         # cleans strings from things that can occur in
         # episode files like dots (.) and trash words
-        def self.clean_episode_data(data, include_trashwords=false, debug=false)
+        #
+        # parameter:
+        #   :data
+        #       string that will be cleaned
+        #   :include_trashwords
+        #       remove Words like German or Dubbed from
+        #       the string (Trashwords)
+        #   :repair_umlauts
+        #       try to repair broken umlauts if they occur
+        #
+        def self.clean_episode_data(data, include_trashwords=false, repair_umlauts=false)
             data.gsub!(/\./, " ")
             data.gsub!(/\-/, " ")
 
@@ -173,7 +185,7 @@ module Serienrenamer
                 for word in data.split(/ /) do
                     next unless word.match(/\w+/)
 
-                    puts "TRASH: '%s'" % word if debug
+                    word = repair_umlauts(word) if repair_umlauts
 
                     # if word is in TRASH_WORDS
                     if ! @@TRASH_WORDS.grep(/#{word}/i).empty?
@@ -193,6 +205,52 @@ module Serienrenamer
             end
 
             return data
+        end
+
+        # This method tries to repair some german umlauts so that
+        # the following occurs
+        #
+        # ae => ä ; ue => ü ; oe => ö ; Ae => Ä ; Ue => Ü ; Oe => Ö
+        #
+        # This method uses a webservice at:
+        #   http://wortschatz.uni-leipzig.de/
+        # which produces statistics about the german language and
+        # e.g. frequency of words occuring in the german language
+        #
+        # this method convert all broken umlauts in the word and compares
+        # the frequency of both version and uses the version which is more
+        # common
+        #
+        # returns an repaired version of the word if necessary
+        def self.repair_umlauts(word)
+
+            if contains_eventual_broken_umlauts?(word)
+
+                repaired = word.gsub(/ae/, 'ä').gsub(/ue/, 'ü').gsub(/oe/, 'ö')
+                repaired.gsub!(/^Ae/, 'Ä')
+                repaired.gsub!(/^Ue/, 'Ü')
+                repaired.gsub!(/^Oe/, 'Ö')
+
+                ws = WLAPI::API.new
+
+                res_broken  = ws.frequencies(word)
+                freq_broken = res_broken.nil? ? -1 : res_broken[0].to_i
+
+                res_repaired  = ws.frequencies(repaired)
+                freq_repaired = res_repaired.nil? ? -1 : res_repaired[0].to_i
+
+                if freq_repaired > freq_broken
+                    return repaired
+                end
+            end
+            return word
+        end
+
+        # checks for eventual broken umlauts
+        #
+        # returns true if broken umlaut if included
+        def self.contains_eventual_broken_umlauts?(string)
+            ! string.match(/ae|ue|oe|Ae|Ue|Oe/).nil?
         end
 
         # tries to match the given string against

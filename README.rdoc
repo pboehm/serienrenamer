@@ -13,10 +13,15 @@ like "S01E01 - Episodename.avi"
 * clean these information and bring that into a recommended format
 * search for information in specific textfiles like "filename.txt"
 * query the seriejunkies.org-feed for episode information
+* query wikipedia for episode information
+* repair broken german umlauts if the occur in the episode title
+* rename these files
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* wlapi
+* mediawiki_gateway
+* highline
 
 == INSTALL:
 
@@ -30,7 +35,7 @@ Copyright (c) 2012 Philipp Böhm
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation in version 2 of the License.
+the Free Software Foundation in version 3 of the License.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of

@@ -63,9 +63,28 @@ class TestEpisode < Test::Unit::TestCase
 
     def test_information_cleanup
         assert_equal("Im sicheren Hafen", Serienrenamer::Episode.clean_episode_data(
-            ".Im.sicheren.Hafen.GERMAN.DUBBED.DL.720p.HDTV.x264-euHD", true
+            ".Im.sicheren.Hafen.GERMAN.DUBBED.DL.720p.HDTV.x264-euHD", true, true
         ))
 
+    end
+
+    def test_repairing_umlauts
+        assert_equal("Duell", Serienrenamer::Episode.repair_umlauts("Duell"))
+        assert_equal("für", Serienrenamer::Episode.repair_umlauts("fuer"))
+        assert_equal("Änderung", Serienrenamer::Episode.repair_umlauts("Aenderung"))
+        assert_equal("Zaubersprüche", Serienrenamer::Episode.repair_umlauts("Zaubersprueche"))
+        assert_equal("Ungeheuerlich", Serienrenamer::Episode.repair_umlauts("Ungeheuerlich"))
+        assert_equal("Frauen", Serienrenamer::Episode.repair_umlauts("Frauen"))
+        assert_equal("Abführmittel", Serienrenamer::Episode.repair_umlauts("Abfuehrmittel"))
+        assert_equal("tödlich", Serienrenamer::Episode.repair_umlauts("toedlich"))
+        assert_equal("König", Serienrenamer::Episode.repair_umlauts("Koenig"))
+        assert_equal("Öko", Serienrenamer::Episode.repair_umlauts("Oeko"))
+        assert_equal("Moeback", Serienrenamer::Episode.repair_umlauts("Moeback")) # both forms not existing
+        assert_equal("Männer", Serienrenamer::Episode.repair_umlauts("Maenner"))
+        assert_equal("Draufgänger", Serienrenamer::Episode.repair_umlauts("Draufgaenger"))
+        assert_equal("Unglücksvögel", Serienrenamer::Episode.repair_umlauts("Ungluecksvoegel"))
+        assert_equal("Jäger", Serienrenamer::Episode.repair_umlauts("Jaeger"))
+        assert_equal("Loyalität", Serienrenamer::Episode.repair_umlauts("Loyalitaet"))
     end
 
     def test_episode_information_extraction_from_file
@@ -80,7 +99,7 @@ class TestEpisode < Test::Unit::TestCase
         assert_equal("S01E01 - Dies ist ein Test.avi", epi.to_s)
 
         flpo = Serienrenamer::Episode.new(@@valid_filenames["flpo"])
-        assert_equal("S04E04 - Getruebte Erinnerungen.avi", flpo.to_s)
+        assert_equal("S04E04 - Getrübte Erinnerungen.avi", flpo.to_s)
 
         csiny = Serienrenamer::Episode.new(@@valid_filenames["csiny"])
         csiny.episodename_needed=false
