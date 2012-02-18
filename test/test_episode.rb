@@ -131,11 +131,11 @@ class TestEpisode < Test::Unit::TestCase
     def test_adding_episodename_afterwards
 
         csiny = Serienrenamer::Episode.new(@@valid_filenames["csiny"])
-        csiny.add_episodename('Dies ist nachträglich eingefügt', false)
+        csiny.add_episode_information('Dies ist nachträglich eingefügt', false)
         assert_equal("S07E20 - Dies ist nachträglich eingefügt.avi", csiny.to_s)
 
         chuck = Serienrenamer::Episode.new(@@valid_directories["chuck"])
-        chuck.add_episodename('Chuck.S01E01.First.Episode.GERMAN.DUBBED.DL.720p.HDTV.x264-euHD', true)
+        chuck.add_episode_information('Chuck.S01E01.First.Episode.GERMAN.DUBBED.DL.720p.HDTV.x264-euHD', true)
         assert_equal("S01E01 - First Episode.avi", chuck.to_s)
     end
 

@@ -105,32 +105,32 @@ class TestPluginWikipedia < Test::Unit::TestCase
 
         flpo = Serienrenamer::Episode.new(@@valid_filenames['flpo'])
         data = Plugin::Wikipedia.generate_episode_information(flpo)[0]
-        flpo.add_episodename(data, false) if data
+        flpo.add_episode_information(data, false) if data
         assert_equal("S04E04 - Getrübte Erinnerungen.avi", flpo.to_s)
 
         two = Serienrenamer::Episode.new(@@valid_filenames['two'])
         data = Plugin::Wikipedia.generate_episode_information(two)[0]
-        two.add_episodename(data, false) if data
+        two.add_episode_information(data, false) if data
         assert_equal("S09E07 - Das Tagebuch.avi", two.to_s)
 
         simp = Serienrenamer::Episode.new(@@valid_filenames['simp'])
         data = Plugin::Wikipedia.generate_episode_information(simp)[0]
-        simp.add_episodename(data, false) if data
+        simp.add_episode_information(data, false) if data
         assert_equal("S09E07 - Hochzeit auf Indisch.avi", simp.to_s)
 
         chuck = Serienrenamer::Episode.new(@@valid_directories['chuck'])
         data = Plugin::Wikipedia.generate_episode_information(chuck)[0]
-        chuck.add_episodename(data, false) if data
+        chuck.add_episode_information(data, false) if data
         assert_equal("S01E01 - Pilot.avi", chuck.to_s)
 
         chuck2 = Serienrenamer::Episode.new(@@valid_directories['chuck2'])
         data = Plugin::Wikipedia.generate_episode_information(chuck2)[0]
-        chuck2.add_episodename(data, false) if data
+        chuck2.add_episode_information(data, false) if data
         assert_equal("S02E10 - Chuck gegen zehn Millionen.avi", chuck2.to_s)
 
         dani = Serienrenamer::Episode.new(@@valid_filenames['dani'])
         data = Plugin::Wikipedia.generate_episode_information(dani)[0]
-        dani.add_episodename(data, false) if data
+        dani.add_episode_information(data, false) if data
         assert_equal("S01E04 - Gewohnheiten.avi", dani.to_s)
     end
 

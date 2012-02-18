@@ -26,7 +26,7 @@ class TestPluginTextfile < Test::Unit::TestCase
     def test_information_extraction
         how = Serienrenamer::Episode.new(@@valid_directories['hmym'])
         data = Plugin::Textfile.generate_episode_information(how)[0]
-        how.add_episodename(data, true)
+        how.add_episode_information(data, true)
         assert_equal("S07E05 - Die Exkursion.avi", how.to_s)
     end
 

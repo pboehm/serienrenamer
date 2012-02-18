@@ -110,21 +110,29 @@ module Serienrenamer
         # options:
         #   :data
         #           string that contains epissodename information
-        #   :need_extraction_clean
+        #   :need_cleanup
         #           if true than it will apply the standard regex
-        #           to clean the string and and extracts that with
+        #           to clean the string and extracts that with
         #           the standard patterns
         #           if false the string will applied without any
         #           checks or cleanup
-        def add_episodename(data, need_extraction_clean=true)
+        #   :extract_seriesname
+        #           tries to extract the seriesname from data
+        def add_episode_information(data, need_cleanup=true, extract_seriesname=false)
             return unless data
 
-            if need_extraction_clean
+            if need_cleanup
                 if Episode.contains_episode_information?(data)
                     pattern = @@PATTERNS.select { |p| ! data.match(p).nil? }[0]
                     infos = pattern.match(data)
                     if infos
                         data = infos[:episodename]
+
+                        # try to extract seriesname if needed
+                        if extract_seriesname and infos[:series].match(/\w+/)
+                            seriesname = Episode.clean_episode_data(infos[:series])
+                            @series = seriesname.strip
+                        end
                     end
                 end
                 data = Episode.clean_episode_data(data, true, true).strip
