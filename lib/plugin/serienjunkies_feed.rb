@@ -13,8 +13,7 @@ module Plugin
         def self.usable; true end
         def self.priority; 10 end
 
-
-        @@FEED_URL = 'http://serienjunkies.org/xml/feeds/episoden.xml'
+        @feed_url = 'http://serienjunkies.org/xml/feeds/episoden.xml'
 
         # this method will be called from the main program
         # with an Serienrenamer::Episode instance as parameter
@@ -23,9 +22,6 @@ module Plugin
         # a hash with all series and existing episodes, which can
         # be used by all future method calls
         #
-        # it returns an updated version of the argument if a
-        # suitable entry was found or nil if here was an
-        # error or no suitable entry
         def self.generate_episode_information(episode)
 
             raise ArgumentError, "Serienrenamer::Episode instance needed" unless
@@ -89,19 +85,22 @@ module Plugin
             return matched_episodes
         end
 
-        private
-
         # create a list of exisiting episodes
         def self.build_up_series_data
             feed_data = []
 
-            open(@@FEED_URL) do |rss|
+            open(@feed_url) do |rss|
                 feed = RSS::Parser.parse(rss)
                 feed.items.each do |item|
                     feed_data.push(item.title.split(/ /)[1])
                 end
             end
             return feed_data
+        end
+
+        # set the feed url (e.g for testing)
+        def self.feed_url=(feed)
+            @feed_url = feed
         end
     end
 end
