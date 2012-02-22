@@ -45,12 +45,19 @@ module Plugin
             if ! @cached_data.has_key?(episode.series)
                 # search for a series site in wikipedia
                 series_site = nil
-                wiki.search(episode.series, nil, 50).each do |title|
-                    pagedata = wiki.get(title)
-                    if is_series_main_page?(pagedata)
-                        series_site = title
-                        break
+                tries = 5
+
+                begin
+                    wiki.search(episode.series, nil, 50).each do |title|
+                        pagedata = wiki.get(title)
+                        if is_series_main_page?(pagedata)
+                            series_site = title
+                            break
+                        end
                     end
+                rescue MediaWiki::APIError => e
+                    tries -= 1
+                    retry if tries > 0
                 end
 
                 return [] unless series_site
