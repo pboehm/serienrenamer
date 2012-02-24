@@ -8,6 +8,7 @@ class TestPluginWikipedia < Test::Unit::TestCase
         'dani'   => 'test/testfiles/Dr.Dani.Santino.S01E04.German.Dubbed.WEB-DL.XViD.avi',
         'two'    => 'test/testfiles/Two.and.a.half.Men.S09E07.German.Dubbed.WS.WEB-DL.XviD-GDR.avi',
         'simp'   => 'test/testfiles/Die.Simpsons.S09E07.German.Dubbed.WS.WEB-DL.XviD-GDR.avi',
+        'sea'    => 'test/testfiles/tcpa-seapatrol_s05e11.avi',
     }
 
     @@valid_directories = {
@@ -132,6 +133,11 @@ class TestPluginWikipedia < Test::Unit::TestCase
         data = Plugin::Wikipedia.generate_episode_information(dani)[0]
         dani.add_episode_information(data, false) if data
         assert_equal("S01E04 - Gewohnheiten.avi", dani.to_s)
+
+        sea = Serienrenamer::Episode.new(@@valid_filenames['sea'])
+        data = Plugin::Wikipedia.generate_episode_information(sea)[0]
+        sea.add_episode_information(data, false) if data
+        assert_equal("S05E11 - Der Morgen danach.avi", sea.to_s)
     end
 
     def test_check_for_series_main_page

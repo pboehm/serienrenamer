@@ -45,19 +45,32 @@ module Plugin
             if ! @cached_data.has_key?(episode.series)
                 # search for a series site in wikipedia
                 series_site = nil
-                tries = 5
+                tries = 3
+                search_pattern = episode.series
+                search_pattern_modified = false
 
                 begin
-                    wiki.search(episode.series, nil, 50).each do |title|
+                    wiki.search(search_pattern, nil, 50).each do |title|
                         pagedata = wiki.get(title)
                         if is_series_main_page?(pagedata)
                             series_site = title
                             break
                         end
                     end
+
+                    # modify the search term pattern so that it contains
+                    # only the last word if the search_pattern contains
+                    # more than one words
+                    if series_site.nil? && ! search_pattern_modified
+                        search_pattern = search_pattern.match(/(\w+)\s*$/)[1]
+                        search_pattern_modified = true
+                        raise EOFError if search_pattern # break out and retry
+                    end
                 rescue MediaWiki::APIError => e
                     tries -= 1
                     retry if tries > 0
+                rescue EOFError => e
+                    retry
                 end
 
                 return [] unless series_site
