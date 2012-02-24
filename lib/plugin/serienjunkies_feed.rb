@@ -72,8 +72,7 @@ module Plugin
                 break if ! matched_episodes.empty?
 
                 # split characterwise if last word does not match
-                if name_words.length == 1 && ! word_splitted &&
-                        pattern.length % 2 == 0
+                if name_words.length == 1 && ! word_splitted
                     name_words = pattern.split(//)
                     word_splitted = true
                     next

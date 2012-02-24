@@ -178,6 +178,7 @@ module Serienrenamer
         #
         def self.clean_episode_data(data, include_trashwords=false, repair_umlauts=false)
             data.gsub!(/\./, " ")
+            data.gsub!(/\_/, " ")
             data.gsub!(/\-/, " ")
 
             # if this feature is enabled than all trash words

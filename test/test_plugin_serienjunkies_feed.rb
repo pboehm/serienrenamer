@@ -5,11 +5,12 @@ class TestPluginSerienjunkiesFeed < Test::Unit::TestCase
     @@valid_filenames = {
         'chuck' => 'test/testfiles/chuck.312.hdtv-lol.avi',
         'flpo'   => 'test/testfiles/Flashpoint.S04E04.German.Dubbed.WEB-DL.XViD.avi',
-        'csiny'  => 'test/testfiles/sof-csi.ny.s07e20.avi',
+        'csiny'  => 'test/testfiles/sof-csi.ny.s07e21.avi',
         'simps'  => 'test/testfiles/simpsons.s22e16.avi',
         'biglove'=> 'test/testfiles/idtv-big.love.s05e06.avi',
         'crmi'   => 'test/testfiles/crmi-s06e22.avi',
         'two'    => 'test/testfiles/Two.and.a.half.Men.S09E07.German.Dubbed.WS.WEB-DL.XviD-GDR.avi',
+        'sea'    => 'test/testfiles/tcpa-seapatrol_s05e11.avi',
     }
 
     @@valid_directories = {
@@ -59,5 +60,16 @@ class TestPluginSerienjunkiesFeed < Test::Unit::TestCase
         data = feed.generate_episode_information(two)[0]
         two.add_episode_information(data, true)
         assert_equal("S09E07 - Das Tagebuch.avi", two.to_s)
+
+        sea = Serienrenamer::Episode.new(@@valid_filenames['sea'])
+        data = feed.generate_episode_information(sea)[0]
+        sea.add_episode_information(data, true)
+        assert_equal("S05E11 - Der Morgen danach.avi", sea.to_s)
+
+        csiny = Serienrenamer::Episode.new(@@valid_filenames['csiny'])
+        data = feed.generate_episode_information(csiny)[0]
+        csiny.add_episode_information(data, true)
+        assert_equal("S07E21 - Kugelhagel.avi", csiny.to_s)
+
     end
 end
