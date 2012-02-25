@@ -28,7 +28,7 @@ module Serienrenamer
         @@TRASH_WORDS = %w(
             German Dubbed DVDRip HDTVRip XviD ITG TVR inspired HDRip
             AMBiTiOUS RSG SiGHT SATRip WS TVS RiP READ GERMAN dTV aTV
-            iNTERNAL CRoW MSE c0nFuSed UTOPiA scum EXPiRED BDRiP
+            iNTERNAL CRoW MSE c0nFuSed UTOPiA scum EXPiRED BDRiP HDTV
             iTunesHD 720p x264 h264 CRiSP euHD WEBRiP ZZGtv ARCHiV
             Prim3time Nfo Repack SiMPTY BLURAYRiP BluRay DELiCiOUS
             UNDELiCiOUS fBi CiD iTunesHDRip RedSeven OiNK idTV DL DD51
@@ -197,7 +197,7 @@ module Serienrenamer
                     word = repair_umlauts(word) if repair_umlauts
 
                     # if word is in TRASH_WORDS
-                    if ! @@TRASH_WORDS.grep(/#{word}/i).empty?
+                    if ! @@TRASH_WORDS.grep(/^#{word}$/i).empty?
                         purge_count += 1
                         last_purge = word
 
