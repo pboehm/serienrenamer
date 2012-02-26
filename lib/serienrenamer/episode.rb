@@ -74,12 +74,8 @@ module Serienrenamer
 
             @episodepath = Episode.determine_video_file(episodepath)
 
-            # extract information from basepath
-            pattern = @@PATTERNS.select { |p| ! basepath.match(p).nil? }[0]
-            raise ArgumentError, 'no suitable pattern found, no episode ?' unless pattern
-
-            infos = pattern.match(basepath)
-            raise ArgumentError, 'suitable pattern does not match the file' unless infos
+            infos = Episode.extract_episode_information(basepath)
+            raise ArgumentError, 'no suitable regex pattern matches' unless infos
 
             @series = Episode.clean_episode_data(infos[:series]).strip
             @episodename = Episode.clean_episode_data(
@@ -123,8 +119,7 @@ module Serienrenamer
 
             if need_cleanup
                 if Episode.contains_episode_information?(data)
-                    pattern = @@PATTERNS.select { |p| ! data.match(p).nil? }[0]
-                    infos = pattern.match(data)
+                    infos = Episode.extract_episode_information(data)
                     if infos
                         data = infos[:episodename]
 
@@ -267,11 +262,22 @@ module Serienrenamer
         # suitable regex is found
         def self.contains_episode_information?(info)
             @@PATTERNS.each do |p|
-                if info.match(p) != nil
+                if info.match(p)
                     return true
                 end
             end
             return false
+        end
+
+        # tries to find a suitable pattern and returns
+        # the matched data or nil if nothing matched
+        def self.extract_episode_information(info)
+            pattern = @@PATTERNS.select { |p| ! info.match(p).nil? }[0]
+            if pattern
+                return pattern.match(info)
+            end
+
+            return nil
         end
 
         # tries to find a valid video file in a given path.

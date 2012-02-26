@@ -50,15 +50,24 @@ class TestEpisode < Test::Unit::TestCase
         @@valid_filenames.each { |name,file|
             assert_equal(true,
                 Serienrenamer::Episode.contains_episode_information?(file))
+
+            assert_equal(false,
+                Serienrenamer::Episode.extract_episode_information(File.basename(file)).nil?)
         }
 
         @@valid_directories.each { |name,dir|
             assert_equal(true,
                 Serienrenamer::Episode.contains_episode_information?(dir))
+
+            assert_equal(false,
+                Serienrenamer::Episode.extract_episode_information(File.basename(dir)).nil?)
         }
 
         assert_equal(false,
                 Serienrenamer::Episode.contains_episode_information?('video.flv'))
+
+        assert_equal(true,
+            Serienrenamer::Episode.extract_episode_information(File.basename('video.flv')).nil?)
     end
 
     def test_information_cleanup
