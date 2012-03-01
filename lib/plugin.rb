@@ -4,8 +4,5 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 module Plugin
 
-    require 'plugin/textfile.rb'
-    require 'plugin/serienjunkies_feed.rb'
-    require 'plugin/wikipedia.rb'
-
+    Dir[File.dirname(__FILE__) + '/plugin/*.rb'].each {|file| require file }
 end
