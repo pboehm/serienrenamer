@@ -17,6 +17,12 @@ module Serienrenamer
         def self.inherited(child)
             Pluginbase.registered_plugins << child
         end
+
+        def self.plugin_name; "PluginBase" end
+
+        def self.to_s
+            self.plugin_name
+        end
     end
 
 end

@@ -29,8 +29,8 @@ module Serienrenamer
             German Dubbed DVDRip HDTVRip XviD ITG TVR inspired HDRip
             AMBiTiOUS RSG SiGHT SATRip WS TVS RiP READ GERMAN dTV aTV
             iNTERNAL CRoW MSE c0nFuSed UTOPiA scum EXPiRED BDRiP HDTV
-            iTunesHD 720p x264 h264 CRiSP euHD WEBRiP ZZGtv ARCHiV
-            Prim3time Nfo Repack SiMPTY BLURAYRiP BluRay DELiCiOUS
+            iTunesHD 720p x264 h264 CRiSP euHD WEBRiP ZZGtv ARCHiV DD20
+            Prim3time Nfo Repack SiMPTY BLURAYRiP BluRay DELiCiOUS Synced
             UNDELiCiOUS fBi CiD iTunesHDRip RedSeven OiNK idTV DL DD51
         )
 
