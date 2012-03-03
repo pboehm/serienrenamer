@@ -8,7 +8,8 @@ require 'serienrenamer'
 require 'plugin'
 require 'optparse'
 require 'fileutils'
-require 'highline/import'
+require "highline/system_extensions"
+include HighLine::SystemExtensions
 
 ###
 # Option definition and handling
@@ -135,11 +136,18 @@ begin
 
         puts ">>> #{epi.to_s}"
         
-        next unless  agree("Filename okay? (y/n) ", true)
+        print "Filename okay ([jy]/n): "
+        char = get_character
+        print char.chr
+
+        unless char.chr.match(/[jy\r]/i)
+            puts "\nwill be skipped ...\n\n"
+            next
+        end
+
+        puts "\n\n"
 
         epi.rename()
-
-        puts ""
     end
 
 rescue Interrupt => e
