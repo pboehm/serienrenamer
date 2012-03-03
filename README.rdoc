@@ -29,7 +29,7 @@ like "S01E01 - Episodename.avi"
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install serienrenamer
 
 == LICENSE:
 
