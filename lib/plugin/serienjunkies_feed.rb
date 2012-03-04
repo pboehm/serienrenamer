@@ -22,7 +22,7 @@ module Plugin
         # a hash with all series and existing episodes, which can
         # be used by all future method calls
         #
-        def self.generate_episode_information(episode)
+        def self.generate_episode_information(episode, debug=false)
 
             raise ArgumentError, "Serienrenamer::Episode instance needed" unless
                 episode.is_a?(Serienrenamer::Episode)
@@ -66,6 +66,7 @@ module Plugin
             word_splitted = false
 
             while ! name_words.empty?
+                p name_words if debug
 
                 pattern = name_words.join('.*')
                 matched_episodes = matched_definitions.grep(/#{pattern}.*S\d+E\d+/i)
@@ -77,6 +78,10 @@ module Plugin
                     word_splitted = true
                     next
                 end
+
+                # if last word was splitted and does not match than break
+                # and return empty resultset
+                break if word_splitted
 
                 name_words.delete_at(0)
             end

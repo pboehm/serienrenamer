@@ -11,6 +11,8 @@ class TestPluginSerienjunkiesFeed < Test::Unit::TestCase
         'crmi'   => 'test/testfiles/crmi-s06e22.avi',
         'two'    => 'test/testfiles/Two.and.a.half.Men.S09E07.German.Dubbed.WS.WEB-DL.XviD-GDR.avi',
         'sea'    => 'test/testfiles/tcpa-seapatrol_s05e11.avi',
+        'shlock' => 'test/testfiles/Sherlock.s02e01.avi',
+        'unit'   => 'test/testfiles/The.Unit.s01e17.avi',
     }
 
     @@valid_directories = {
@@ -71,5 +73,14 @@ class TestPluginSerienjunkiesFeed < Test::Unit::TestCase
         csiny.add_episode_information(data, true)
         assert_equal("S07E21 - Kugelhagel.avi", csiny.to_s)
 
+        # the following episodes are not exisiting in the feed
+        # so it should returns nil
+        sherlock = Serienrenamer::Episode.new(@@valid_filenames['shlock'])
+        data = feed.generate_episode_information(sherlock)[0]
+        assert_nil(data)
+
+        theunit = Serienrenamer::Episode.new(@@valid_filenames['unit'])
+        data = feed.generate_episode_information(theunit)[0]
+        assert_nil(data)
     end
 end
