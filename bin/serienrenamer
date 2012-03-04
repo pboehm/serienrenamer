@@ -46,6 +46,12 @@ opts.on( "-a", "--[no-]all",
     options[:process_all_files] = opt
 end
 
+opts.on( "-v", "--version",
+         "Prints the version number.") do |opt|
+    puts Serienrenamer::VERSION
+    exit(0)
+end
+
 opts.separator("")
 opts.separator("  Arguments:")
 opts.separator("     DIR      The path that includes the episodes")
