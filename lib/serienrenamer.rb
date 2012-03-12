@@ -3,7 +3,7 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 
 module Serienrenamer
-    VERSION = '0.0.2'
+    VERSION = '0.0.3'
 
     require 'serienrenamer/episode.rb'
 
