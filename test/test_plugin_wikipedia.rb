@@ -88,7 +88,7 @@ class TestPluginWikipedia < Test::Unit::TestCase
         assert_equal("Mich trifft der Blitz", seasons[2][16])
 
         data = wiki.get("Flashpoint – Das Spezialkommando")
-        seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data, true)
+        seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
 
         assert_equal("Skorpion", seasons[1][1])
         assert_equal("Die Festung", seasons[2][2])
@@ -99,6 +99,22 @@ class TestPluginWikipedia < Test::Unit::TestCase
 
         assert_equal("Touchdown", seasons[1][1])
         assert_equal("Zickenkrieg", seasons[1][7])
+
+        # the following series have an old inarticle episodelist
+        data = wiki.get("Prison Break")
+        seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
+
+        assert_equal("Der große Plan", seasons[1][1])
+        assert_equal("Seite 1213", seasons[2][5])
+
+        data = wiki.get("Numbers – Die Logik des Verbrechens")
+        seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
+
+        assert_equal("Brandzeichen", seasons[1][1])
+        assert_equal("Das Attentat", seasons[2][5])
+        assert_equal("Gequälte Kreatur", seasons[5][19])
+        assert_equal("Hauptgewinn", seasons[6][11])
+
     end
 
 

@@ -24,6 +24,8 @@ module Plugin
         @@CONTAINS_INARTICLE_EPISODE_LIST = /\<div.*\>Staffel.(\d+).*\<\/div\>.*class=\"wikitable\".*titel/m
         @@INPAGE_SEASON_SEPARATOR = /\<div.style=\"clear:both\;.class=\"NavFrame\"\>/
         @@WIKITABLE_EXTRACT_PATTERN = /(\{\|.class=\"wikitable\".*\|\})\n/m
+        @@IS_ONE_LINE_EPISODE_LIST = /\|.*\|\|.*\|\|.*\|\|/m
+
 
         # this method will be called from the main program
         # with an Serienrenamer::Episode instance as parameter
@@ -113,6 +115,7 @@ module Plugin
             return episode_names
         end
 
+
         # This method will extract season based information
         # from a string that contains a wikipedia episodelist page
         #
@@ -148,6 +151,7 @@ module Plugin
 
             return series_data
         end
+
 
         # this method will be called with a wikipedia seasontable
         # as parameter and will extract all episodes from this
@@ -212,6 +216,7 @@ module Plugin
             return season_data
         end
 
+
         # This method will extract season based information
         # from a string that contains a series page with an
         # episodelist included
@@ -237,7 +242,15 @@ module Plugin
                 season_nr = season.match(@@CONTAINS_INARTICLE_EPISODE_LIST)[1].to_i
 
                 wikitable = season.match(@@WIKITABLE_EXTRACT_PATTERN)[1]
-                episodes = parse_inarticle_season_table(wikitable)
+
+                # we have to detect the type of the inarticle season page
+                # because there are two different kinds of table structures
+                # used in the german wikipedia
+                if self.is_episode_list_with_one_episode_per_line?(wikitable)
+                    episodes = parse_inarticle_season_table_with_one_line(wikitable)
+                else
+                    episodes = parse_inarticle_season_table(wikitable)
+                end
 
                 # HACK if a season is splitted into different parts
                 # eg. Flashpoint (2.1 and 2.2) than merge that if possible
@@ -252,6 +265,7 @@ module Plugin
 
             return series_data
         end
+
 
         # this method will be called with a wikitable for a season
         # as parameter and will extract all episodes from this
@@ -331,6 +345,71 @@ module Plugin
             return season_data
         end
 
+
+        # this method will be called with a wikitable for a season
+        # as parameter and will extract all episodes from this
+        # and returns that as an array where the episode number is
+        # the index
+        #
+        # this method implements a special format that takes place in
+        # e.g. 'Prison Break' where an episode is not spread along several
+        # lines like in the method above
+        #
+        # Example for an wikitable for episodes:
+        #
+        #{| class="wikitable"
+        # |- style="color:#black; background-color:#006699"
+        # ! '''Episode''' !! '''Deutscher Titel''' !! '''Originaltitel''' !! '''Erstausstrahlung (DE)''' !! '''Erstausstrahlung (USA)'''
+        # |-
+        # |'''1''' (1-01) || Der große Plan || Pilot || 21. Juni 2007 || 29. August 2005
+        # |-
+        # |'''2''' (1-02) || Lügt Lincoln? || Allen || 21. Juni 2007 || 29. August 2005
+        # |-
+        # |'''3''' (1-03) || Vertrauenstest || Cell Test || 28. Juni 2007 || 5. September 2005
+        # |-
+        # |'''4''' (1-04) || Veronica steigt ein || Cute Poison || 28. Juni 2007 || 12. September 2005
+        #
+        def self.parse_inarticle_season_table_with_one_line(table)
+            raise ArgumentError, 'String with seasontable expected' unless
+                table.is_a?(String)
+
+            season_data = []
+            episode_nr_col   = nil
+            episode_name_col = nil
+
+            table.split(/^\|\-.*$/).each do |tablerow|
+
+                if tablerow.match(/!!.*!!.*!!/)
+                    # extract column numbers from table header
+                    tablerow.split(/!!/).each_with_index do |col,index|
+                        episode_nr_col   = index if col.match(/Episode/i)
+                        episode_name_col = index if col.match(/Deutsch.*Titel/i)
+                    end
+
+                elsif tablerow.match(/\|\|.*\w+.*\|\|/)
+                    tablerow.strip!
+                    columns = tablerow.split(/\|\|/)
+
+                    # the following cleanes up the column so that the following occurs
+                    # " '''7''' (1-07) " => "7     1 07"
+                    #
+                    # we can now extract the last bunch of digits and this algorithm is
+                    # some kind of format independent
+                    dirty_episode_nr   = columns[episode_nr_col].gsub(/\D/, " ").strip
+                    episode_nr = dirty_episode_nr.match(/(\d+)$/)[1]
+                    next unless episode_nr
+
+                    episode_name = columns[episode_name_col].strip
+                    next unless episode_nr.match(/\w+/)
+
+                    season_data[episode_nr.to_i] = episode_name
+                end
+            end
+
+            return season_data
+        end
+
+
         # this method checks if the page is the main page
         # for a series
         #
@@ -357,6 +436,11 @@ module Plugin
         # test if the page contains a episode list
         def self.contains_inarticle_episode_list?(page)
             page.match(@@CONTAINS_INARTICLE_EPISODE_LIST) != nil
+        end
+
+        # tests for the type of in article episode list
+        def self.is_episode_list_with_one_episode_per_line?(page)
+            page.match(@@IS_ONE_LINE_EPISODE_LIST) != nil
         end
     end
 end
