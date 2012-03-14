@@ -7,31 +7,31 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 # information
 #
 class TestPluginTextfile < Test::Unit::TestCase
-    @@valid_directories = {
-        'hmym'  => 'test/testfiles/HMMG.705',
+    @@directories = {
+        'hmym'  => 'HMMG.705',
     }
 
     def setup
-        system('rm -r test/testfiles/*')
+        TestHelper.write_episode_textfile(
+            @@directories["hmym"],
+            "How.I.Met.Your.Mother.S07E05.Die.Exkursion.German.Dubbed.HDTV.XviD-ITG"
+        )
+        TestHelper.cwd
+    end
 
-        d = @@valid_directories["hmym"]
-        FileUtils.mkdir(d)
-        FileUtils.touch(File.join(d, 'episode.avi'))
-
-        filenametxt = File.new(File.join(d, "filename.txt"), "w")
-        filenametxt.write("How.I.Met.Your.Mother.S07E05.Die.Exkursion.German.Dubbed.HDTV.XviD-ITG")
-        filenametxt.close
+    def teardown
+        TestHelper.clean
     end
 
     def test_information_extraction
-        how = Serienrenamer::Episode.new(@@valid_directories['hmym'])
+        how = Serienrenamer::Episode.new(@@directories['hmym'])
         data = Plugin::Textfile.generate_episode_information(how)[0]
         how.add_episode_information(data, true)
         assert_equal("S07E05 - Die Exkursion.avi", how.to_s)
     end
 
     def test_information_extraction_with_directory_parameter
-        how = @@valid_directories['hmym']
+        how = @@directories['hmym']
         data = Plugin::Textfile.generate_episode_information(how)[0]
         assert_not_nil(data)
     end

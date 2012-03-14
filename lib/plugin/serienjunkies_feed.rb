@@ -104,7 +104,7 @@ module Plugin
 
         # set the feed url (e.g for testing)
         def self.feed_url=(feed)
-            @feed_url = feed
+            @feed_url = File.absolute_path(feed)
         end
     end
 end

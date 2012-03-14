@@ -3,30 +3,27 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 require 'media_wiki'
 
 class TestPluginWikipedia < Test::Unit::TestCase
-    @@valid_filenames = {
-        'flpo'   => 'test/testfiles/Flashpoint.S04E04.German.Dubbed.WEB-DL.XViD.avi',
-        'dani'   => 'test/testfiles/Dr.Dani.Santino.S01E04.German.Dubbed.WEB-DL.XViD.avi',
-        'two'    => 'test/testfiles/Two.and.a.half.Men.S09E07.German.Dubbed.WS.WEB-DL.XviD-GDR.avi',
-        'simp'   => 'test/testfiles/Die.Simpsons.S09E07.German.Dubbed.WS.WEB-DL.XviD-GDR.avi',
-        'sea'    => 'test/testfiles/tcpa-seapatrol_s05e11.avi',
+    @@files = {
+        'flpo' => 'Flashpoint.S04E04.German.Dubbed.WEB-DL.XViD.avi',
+        'dani' => 'Dr.Dani.Santino.S01E04.German.Dubbed.WEB-DL.XViD.avi',
+        'two'  => 'Two.and.a.half.Men.S09E07.German.Dubbed.WS.WEB-DL.XviD-GDR.avi',
+        'simp' => 'Die.Simpsons.S09E07.German.Dubbed.WS.WEB-DL.XviD-GDR.avi',
+        'sea'  => 'tcpa-seapatrol_s05e11.avi',
     }
 
-    @@valid_directories = {
-        'chuck'  => 'test/testfiles/Chuck.S01E01.German.Dubbed.BLURAYRiP.WEB-DL',
-        'chuck2' => 'test/testfiles/Chuck.S02E10.German.Dubbed.BLURAYRiP.WEB-DL',
+    @@directories = {
+        'chuck'  => 'Chuck.S01E01.German.Dubbed.BLURAYRiP.WEB-DL',
+        'chuck2' => 'Chuck.S02E10.German.Dubbed.BLURAYRiP.WEB-DL',
     }
 
     def setup
-        system('rm -r test/testfiles/*')
+        TestHelper.create_test_files(@@files.values)
+        TestHelper.create_test_dirs(@@directories.values)
+        TestHelper.cwd
+    end
 
-        @@valid_filenames.each { |n,f|
-            FileUtils.touch f unless File.file?(f)
-        }
-
-        @@valid_directories.each { |n,d|
-            FileUtils.mkdir(d)
-            FileUtils.touch(File.join(d, 'episode.avi'))
-        }
+    def teardown
+        TestHelper.clean
     end
 
     def test_episode_list_page_data_extraction
@@ -120,37 +117,37 @@ class TestPluginWikipedia < Test::Unit::TestCase
 
     def test_episode_information_generation
 
-        flpo = Serienrenamer::Episode.new(@@valid_filenames['flpo'])
+        flpo = Serienrenamer::Episode.new(@@files['flpo'])
         data = Plugin::Wikipedia.generate_episode_information(flpo)[0]
         flpo.add_episode_information(data, false) if data
         assert_equal("S04E04 - Getrübte Erinnerungen.avi", flpo.to_s)
 
-        two = Serienrenamer::Episode.new(@@valid_filenames['two'])
+        two = Serienrenamer::Episode.new(@@files['two'])
         data = Plugin::Wikipedia.generate_episode_information(two)[0]
         two.add_episode_information(data, false) if data
         assert_equal("S09E07 - Das Tagebuch.avi", two.to_s)
 
-        simp = Serienrenamer::Episode.new(@@valid_filenames['simp'])
+        simp = Serienrenamer::Episode.new(@@files['simp'])
         data = Plugin::Wikipedia.generate_episode_information(simp)[0]
         simp.add_episode_information(data, false) if data
         assert_equal("S09E07 - Hochzeit auf Indisch.avi", simp.to_s)
 
-        chuck = Serienrenamer::Episode.new(@@valid_directories['chuck'])
+        chuck = Serienrenamer::Episode.new(@@directories['chuck'])
         data = Plugin::Wikipedia.generate_episode_information(chuck)[0]
         chuck.add_episode_information(data, false) if data
         assert_equal("S01E01 - Pilot.avi", chuck.to_s)
 
-        chuck2 = Serienrenamer::Episode.new(@@valid_directories['chuck2'])
+        chuck2 = Serienrenamer::Episode.new(@@directories['chuck2'])
         data = Plugin::Wikipedia.generate_episode_information(chuck2)[0]
         chuck2.add_episode_information(data, false) if data
         assert_equal("S02E10 - Chuck gegen zehn Millionen.avi", chuck2.to_s)
 
-        dani = Serienrenamer::Episode.new(@@valid_filenames['dani'])
+        dani = Serienrenamer::Episode.new(@@files['dani'])
         data = Plugin::Wikipedia.generate_episode_information(dani)[0]
         dani.add_episode_information(data, false) if data
         assert_equal("S01E04 - Gewohnheiten.avi", dani.to_s)
 
-        sea = Serienrenamer::Episode.new(@@valid_filenames['sea'])
+        sea = Serienrenamer::Episode.new(@@files['sea'])
         data = Plugin::Wikipedia.generate_episode_information(sea)[0]
         sea.add_episode_information(data, false) if data
         assert_equal("S05E11 - Der Morgen danach.avi", sea.to_s)
