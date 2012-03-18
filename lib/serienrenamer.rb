@@ -6,6 +6,7 @@ module Serienrenamer
     VERSION = '0.0.3'
 
     require 'serienrenamer/episode.rb'
+    require 'serienrenamer/information_store.rb'
 
     class Pluginbase
 
