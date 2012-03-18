@@ -199,4 +199,16 @@ class TestEpisode < Test::Unit::TestCase
         tbbt.rename
         assert_equal(true, tbbt.success)
     end
+
+    def test_generate_episode_hash
+        chuck = Serienrenamer::Episode.new(@@directories["chuck"])
+
+        videofile = File.new(chuck.episodepath, "w")
+        videofile.write("Chuck.S01E01.Testepisode.German.Dubbed.BLURAYRiP")
+        videofile.close
+
+        assert_equal("d538bf7632bd3b14601015fbc3a39f60", chuck.md5sum)
+        chuck.rename
+        assert_equal("d538bf7632bd3b14601015fbc3a39f60", chuck.md5sum)
+    end
 end

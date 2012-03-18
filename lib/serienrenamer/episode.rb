@@ -2,6 +2,7 @@
 require 'find'
 require 'fileutils'
 require 'wlapi'
+require 'digest/md5'
 
 module Serienrenamer
 
@@ -150,9 +151,20 @@ module Serienrenamer
                 end
 
                 @success = true
+                @episodepath = destination_file
             rescue SystemCallError => e
                 puts "Rename failed: #{e}"
             end
+        end
+
+        # returns the md5sum of the episode_path so that it can
+        # be distinguished
+        def md5sum
+            if File.file?(@episodepath)
+                d = Digest::MD5.new
+                return d.hexdigest(open(@episodepath, 'rb').read)
+            end
+            return nil
         end
 
         ##################
