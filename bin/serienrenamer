@@ -96,6 +96,8 @@ Dir.chdir(episode_directory)
 
 ###
 # Iterate through all directory entries
+info_storage = Serienrenamer::InformationStore.new(config[:store_path])
+
 begin
 
     for entry in Dir.entries('.').sort do
@@ -165,6 +167,8 @@ begin
             next
         end
 
+        info_storage.store(epi) if config[:store_episode_info]
+
         puts "\n\n"
 
         epi.rename()
@@ -172,4 +176,6 @@ begin
 
 rescue Interrupt => e
     puts
+ensure
+    info_storage.write() if config[:store_episode_info]
 end
