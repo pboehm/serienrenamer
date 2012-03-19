@@ -10,13 +10,16 @@ lib/plugin/textfile.rb
 lib/plugin/wikipedia.rb
 lib/serienrenamer.rb
 lib/serienrenamer/episode.rb
+lib/serienrenamer/information_store.rb
 script/console
 script/destroy
 script/generate
 serienrenamer.gemspec
 test/serienjunkies_feed_sample.xml
 test/test_episode.rb
+test/test_hash.rb
 test/test_helper.rb
+test/test_information_store.rb
 test/test_plugin_serienjunkies_de.rb
 test/test_plugin_serienjunkies_feed.rb
 test/test_plugin_textfile.rb
