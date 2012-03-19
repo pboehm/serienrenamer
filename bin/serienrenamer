@@ -11,8 +11,24 @@ require 'fileutils'
 require "highline/system_extensions"
 include HighLine::SystemExtensions
 
+# create program configuration dirs/files
+CONFIG_DIR  = File.join( File.expand_path("~"), ".serienrenamer" )
+CONFIG_FILE = File.join( CONFIG_DIR, "config.yml" )
+FileUtils.mkdir(CONFIG_DIR) unless File.directory?(CONFIG_DIR)
+
 ###
-# Option definition and handling
+# configuration
+STANDARD_CONFIG = {
+    :default_directory  => File.join(File.expand_path("~"), "Downloads"),
+    :store_episode_info => false,
+    :store_path         => File.join(CONFIG_DIR, "information_storage.yml"),
+    :illegal_words      => %w{ ML },
+}
+
+config = STANDARD_CONFIG.merge_with_serialized(CONFIG_FILE)
+
+###
+# option definition and handling
 options = {}
 opts = OptionParser.new("Usage: #{$0} [OPTIONS] DIR")
 opts.separator("")
@@ -60,9 +76,8 @@ opts.separator("")
 
 rest = opts.permute(ARGV)
 
-################
+###
 # Load plugins #
-################
 Dir[File.join(File.dirname(__FILE__),"../lib/plugin/*.rb")].each do |plugin|
 	load plugin
 end
@@ -72,16 +87,15 @@ puts "Plugins loaded: #{Serienrenamer::Pluginbase.registered_plugins.inspect}"
 puts ""
 
 # change into DIR
-episode_directory = rest.pop || File.join( File.expand_path('~'), "Downloads" )
+episode_directory = rest.pop || config[:default_directory]
 
 fail "'#{episode_directory}' does not exist or is not a directory" unless
     Dir.exists?(episode_directory)
 
 Dir.chdir(episode_directory)
 
-#########################################
-# Iterate through all directory entries #
-#########################################
+###
+# Iterate through all directory entries
 begin
 
     for entry in Dir.entries('.').sort do
