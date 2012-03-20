@@ -22,6 +22,7 @@ STANDARD_CONFIG = {
     :default_directory  => File.join(File.expand_path("~"), "Downloads"),
     :store_episode_info => false,
     :store_path         => File.join(CONFIG_DIR, "information_storage.yml"),
+    :byte_count_for_md5 => 2048,
     :illegal_words      => %w{ ML },
 }
 
@@ -96,7 +97,8 @@ Dir.chdir(episode_directory)
 
 ###
 # Iterate through all directory entries
-info_storage = Serienrenamer::InformationStore.new(config[:store_path])
+info_storage = Serienrenamer::InformationStore.new(
+    config[:store_path], config[:byte_count_for_md5])
 
 begin
 

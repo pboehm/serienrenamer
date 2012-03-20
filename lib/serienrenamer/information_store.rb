@@ -6,12 +6,13 @@ module Serienrenamer
     # in form of a yaml file which can be used from other tools
     class InformationStore
 
-        attr_reader :episode_hash
+        attr_reader :episode_hash, :byte_count
 
         # this method will load an exisiting yaml file and tries to rebuild
         # the used hash with episode data
-        def initialize(yaml_path)
+        def initialize(yaml_path, byte_count=2048)
             @yaml_path = yaml_path
+            @byte_count = byte_count
             @episode_hash = {}
 
             if File.file?(yaml_path)
@@ -26,7 +27,7 @@ module Serienrenamer
                 episode.is_a? Serienrenamer::Episode
 
             unless @episode_hash[episode.md5sum]
-                @episode_hash[episode.md5sum] = episode.series
+                @episode_hash[episode.md5sum(@byte_count)] = episode.series
             end
         end
 

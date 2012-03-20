@@ -159,10 +159,19 @@ module Serienrenamer
 
         # returns the md5sum of the episode_path so that it can
         # be distinguished
-        def md5sum
+        #
+        # if :byte_count is set to a value different from nil than these size
+        # of bytes is read instead of the whole file, otherwise the whole file
+        def md5sum(byte_count=nil)
             if File.file?(@episodepath)
                 d = Digest::MD5.new
-                return d.hexdigest(open(@episodepath, 'rb').read)
+
+                file = File.new(@episodepath)
+                if byte_count.nil?
+                    byte_count = file.size
+                end
+
+                return d.hexdigest(open(file, 'rb').read(byte_count))
             end
             return nil
         end

@@ -210,5 +210,9 @@ class TestEpisode < Test::Unit::TestCase
         assert_equal("d538bf7632bd3b14601015fbc3a39f60", chuck.md5sum)
         chuck.rename
         assert_equal("d538bf7632bd3b14601015fbc3a39f60", chuck.md5sum)
+
+        # explicit bytecount
+        assert_equal("78193bb6ffe829b49981b494ab243a82", chuck.md5sum(5))
+        assert_equal("0f2788bb1324330898fffddcafd2b8e1", chuck.md5sum(12))
     end
 end
