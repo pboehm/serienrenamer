@@ -37,6 +37,10 @@ module Plugin
                     next if File.size(file) > 128 || File.zero?(file)
 
                     data = File.open(file, "rb").read
+
+                    # only files with one line with the title are interesting
+                    next if data.lines.to_a.size > 1
+
                     if data != nil && data.match(/\w+/) &&
                             Serienrenamer::Episode.contains_episode_information?(data)
                         matched_episodes.push(data)

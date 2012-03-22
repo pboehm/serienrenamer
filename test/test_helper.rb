@@ -36,7 +36,7 @@ class TestHelper
 
             create_test_dirs([ dir ]) unless File.directory?(dirpath)
 
-            filenametxt = File.new(File.join(dirpath, "filename.txt"), "w")
+            filenametxt = File.new(File.join(dirpath, filename), "w")
             filenametxt.write(title)
             filenametxt.close
         end

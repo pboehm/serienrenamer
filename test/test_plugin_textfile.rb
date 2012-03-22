@@ -9,12 +9,26 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 class TestPluginTextfile < Test::Unit::TestCase
     @@directories = {
         'hmym'  => 'HMMG.705',
+        'hmmg'  => 'HMMG.711',
     }
 
     def setup
         TestHelper.write_episode_textfile(
             @@directories["hmym"],
             "How.I.Met.Your.Mother.S07E05.Die.Exkursion.German.Dubbed.HDTV.XviD-ITG"
+        )
+
+        # two files which contains possible information
+        TestHelper.write_episode_textfile(
+            @@directories["hmmg"],
+            "How.I.Met.Your.Mother.S07E11.Plan.B.German.Dubbed.HDTV.XviD-ITG"
+        )
+        TestHelper.write_episode_textfile(
+            @@directories["hmmg"],
+            "Show ......... : How I Met Your Mother 7x11
+            IMDB ......... : http://www.imdb.com/title/tt0460649/
+            Notes ........ : ",
+            "nfo.nfo"
         )
         TestHelper.cwd
     end
@@ -28,6 +42,13 @@ class TestPluginTextfile < Test::Unit::TestCase
         data = Plugin::Textfile.generate_episode_information(how)[0]
         how.add_episode_information(data, true)
         assert_equal("S07E05 - Die Exkursion.avi", how.to_s)
+    end
+
+    def test_select_right_textfile
+        how = Serienrenamer::Episode.new(@@directories['hmmg'])
+        data = Plugin::Textfile.generate_episode_information(how)[0]
+        how.add_episode_information(data, true)
+        assert_equal("S07E11 - Plan B.avi", how.to_s)
     end
 
     def test_information_extraction_with_directory_parameter
