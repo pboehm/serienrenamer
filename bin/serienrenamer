@@ -8,6 +8,8 @@ require 'serienrenamer'
 require 'plugin'
 require 'optparse'
 require 'fileutils'
+require 'hashconfig'
+require 'yaml'
 require "highline/system_extensions"
 include HighLine::SystemExtensions
 
@@ -61,6 +63,12 @@ end
 opts.on( "-a", "--[no-]all", 
          "Process all files (including right formatted files)") do |opt|
     options[:process_all_files] = opt
+end
+
+opts.on( "--showconfig", "Prints the current configuration.") do |opt|
+    puts "loaded configuration options:"
+    puts config.to_yaml
+    exit(0)
 end
 
 opts.on( "-v", "--version",

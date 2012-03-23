@@ -17,6 +17,7 @@ $hoe = Hoe.spec 'serienrenamer' do
   self.dependency('mediawiki-gateway', '>= 0.4.4')
   self.dependency('mechanize', '>= 2.3')
   self.dependency('highline', '>= 1.6.11')
+  self.dependency('hashconfig', '>= 0.0.1')
 end
 
 require 'newgem/tasks'
