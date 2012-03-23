@@ -17,7 +17,6 @@ script/generate
 serienrenamer.gemspec
 test/serienjunkies_feed_sample.xml
 test/test_episode.rb
-test/test_hash.rb
 test/test_helper.rb
 test/test_information_store.rb
 test/test_plugin_serienjunkies_de.rb

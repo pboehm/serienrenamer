@@ -12,7 +12,7 @@ Hoe.plugin :newgem
 # Run 'rake -T' to see list of generated tasks (from gem root directory)
 $hoe = Hoe.spec 'serienrenamer' do
   self.developer 'Philipp Boehm', 'philipp@i77i.de'
-  self.rubyforge_name       = self.name
+  self.rubyforge_name = self.name
   self.dependency('wlapi', '>= 0.8.4')
   self.dependency('mediawiki-gateway', '>= 0.4.4')
   self.dependency('mechanize', '>= 2.3')
