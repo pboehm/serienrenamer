@@ -26,6 +26,7 @@ like "S01E01 - Episodename.avi"
 * highline
 * nokogiri
 * mechanize
+* hashconfig
 
 == INSTALL:
 

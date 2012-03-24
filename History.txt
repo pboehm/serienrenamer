@@ -1,9 +1,0 @@
-=== 0.0.5 2012-03-20
-
-* improved md5sum performance with an explicit byte count so that only
-  the first x bytes are hashed
-
-=== 0.0.1 2012-02-01
-
-* 1 major enhancement:
-  * Initial release
