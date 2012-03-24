@@ -12,7 +12,7 @@ module Serienrenamer
         # the used hash with episode data
         def initialize(yaml_path, byte_count=2048)
             @yaml_path = yaml_path
-            @byte_count = byte_count
+            @byte_count = byte_count.to_i
             @episode_hash = {}
 
             if File.file?(yaml_path)
@@ -26,8 +26,10 @@ module Serienrenamer
             raise ArgumentError, "Episode instance needed" unless
                 episode.is_a? Serienrenamer::Episode
 
-            unless @episode_hash[episode.md5sum]
-                @episode_hash[episode.md5sum(@byte_count)] = episode.series
+            md5sum = episode.md5sum(@byte_count)
+
+            unless @episode_hash[md5sum]
+                @episode_hash[md5sum] = episode.series
             end
         end
 
