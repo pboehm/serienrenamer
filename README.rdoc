@@ -32,6 +32,13 @@ like "S01E01 - Episodename.avi"
 
 * sudo gem install serienrenamer
 
+== Development:
+
+If you want to improve "serienrenamer" than checkout this repository and run
+'bundle' to get the development dependencies (vcr, fakeweb) installed and than
+run 'rake test' which could takes some time the at the first run. After that
+it should be quick.
+
 == LICENSE:
 
 (General Public License)
