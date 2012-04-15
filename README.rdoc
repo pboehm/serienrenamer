@@ -13,6 +13,7 @@ like "S01E01 - Episodename.avi"
 * clean these information and bring that into a recommended format
 * search for information in specific textfiles like "filename.txt"
 * query the seriejunkies.org-feed for episode information
+* query the serienjunkies.org Page for series specific data
 * query the serienjunkies.de Page for series specific data
 * query wikipedia for episode information
 * repair broken german umlauts if the occur in the episode title
