@@ -32,7 +32,7 @@ module Serienrenamer
             iNTERNAL CRoW MSE c0nFuSed UTOPiA scum EXPiRED BDRiP HDTV
             iTunesHD 720p x264 h264 CRiSP euHD WEBRiP ZZGtv ARCHiV DD20
             Prim3time Nfo Repack SiMPTY BLURAYRiP BluRay DELiCiOUS Synced
-            UNDELiCiOUS fBi CiD iTunesHDRip RedSeven OiNK idTV DL DD51
+            UNDELiCiOUS fBi CiD iTunesHDRip RedSeven OiNK idTV DL DD51 AC3
         )
 
         # Constructor for the Episode-Class, which takes an episode as

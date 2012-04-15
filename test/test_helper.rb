@@ -64,6 +64,7 @@ end
 VCR.configure do |c|
   c.cassette_library_dir = File.join(File.dirname(__FILE__), 'vcr_cassettes')
   c.hook_into :fakeweb
+  c.allow_http_connections_when_no_cassette = true
 end
 
 module Kernel
