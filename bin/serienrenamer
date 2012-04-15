@@ -21,11 +21,11 @@ FileUtils.mkdir(CONFIG_DIR) unless File.directory?(CONFIG_DIR)
 ###
 # configuration
 STANDARD_CONFIG = {
-    :default_directory  => File.join(File.expand_path("~"), "Downloads"),
-    :store_episode_info => false,
-    :store_path         => File.join(CONFIG_DIR, "information_storage.yml"),
-    :byte_count_for_md5 => 2048,
-    :illegal_words      => %w{ ML },
+  :default_directory  => File.join(File.expand_path("~"), "Downloads"),
+  :store_episode_info => false,
+  :store_path         => File.join(CONFIG_DIR, "information_storage.yml"),
+  :byte_count_for_md5 => 2048,
+  :illegal_words      => %w{ ML },
 }
 
 config = STANDARD_CONFIG.merge_with_serialized(CONFIG_FILE)
@@ -41,40 +41,40 @@ opts.separator("")
 opts.separator("  Options:")
 
 opts.on( "-p", "--plugin STRING", String,
-         "use only this plugin") do |opt|
-    options[:plugin] = opt
+        "use only this plugin") do |opt|
+  options[:plugin] = opt
 end
 
 opts.on( "-s", "--series STRING", String,
-         "series name that will be set for all episodes") do |opt|
-    options[:series] = opt
+        "series name that will be set for all episodes") do |opt|
+  options[:series] = opt
 end
 
-opts.on( "-S", "--[no-]season", 
-         "DIR contains episodes of one season of one series") do |opt|
-    options[:is_single_season] = opt
+opts.on( "-S", "--[no-]season",
+        "DIR contains episodes of one season of one series") do |opt|
+  options[:is_single_season] = opt
 end
 
-opts.on( "-i", "--[no-]ignore-filenamedata", 
-         "Always ask plugins for episode information") do |opt|
-    options[:ignore_filenamedata] = opt
+opts.on( "-i", "--[no-]ignore-filenamedata",
+        "Always ask plugins for episode information") do |opt|
+  options[:ignore_filenamedata] = opt
 end
 
-opts.on( "-a", "--[no-]all", 
-         "Process all files (including right formatted files)") do |opt|
-    options[:process_all_files] = opt
+opts.on( "-a", "--[no-]all",
+        "Process all files (including right formatted files)") do |opt|
+  options[:process_all_files] = opt
 end
 
 opts.on( "--showconfig", "Prints the current configuration.") do |opt|
-    puts "loaded configuration options:"
-    puts config.to_yaml
-    exit(0)
+  puts "loaded configuration options:"
+  puts config.to_yaml
+  exit(0)
 end
 
 opts.on( "-v", "--version",
-         "Prints the version number.") do |opt|
-    puts Serienrenamer::VERSION
-    exit(0)
+        "Prints the version number.") do |opt|
+  puts Serienrenamer::VERSION
+  exit(0)
 end
 
 opts.separator("")
@@ -88,7 +88,7 @@ rest = opts.permute(ARGV)
 ###
 # Load plugins #
 Dir[File.join(File.dirname(__FILE__),"../lib/plugin/*.rb")].each do |plugin|
-	load plugin
+  load plugin
 end
 Serienrenamer::Pluginbase.registered_plugins.sort! {|x,y| y.priority <=> x.priority }
 
@@ -99,93 +99,95 @@ puts ""
 episode_directory = rest.pop || config[:default_directory]
 
 fail "'#{episode_directory}' does not exist or is not a directory" unless
-    Dir.exists?(episode_directory)
+  Dir.exists?(episode_directory)
 
 Dir.chdir(episode_directory)
 
 ###
 # Iterate through all directory entries
 info_storage = Serienrenamer::InformationStore.new(
-    config[:store_path], config[:byte_count_for_md5])
+  config[:store_path], config[:byte_count_for_md5])
 
 begin
 
-    for entry in Dir.entries('.').sort do
+  for entry in Dir.entries('.').sort do
 
-        next if entry.match(/^\./)
-        next unless Serienrenamer::Episode.determine_video_file(entry)
+    next if entry.match(/^\./)
+    next unless Serienrenamer::Episode.determine_video_file(entry)
 
-        # skip files that already have the right format
-        unless options[:process_all_files]
-            next if entry.match(/^S\d+E\d+.-.\w+.*\.\w+$/)
-        end
-
-        begin
-            epi = Serienrenamer::Episode.new(entry)
-            if options[:series]
-                epi.series = options[:series]
-            end
-        rescue => e
-            next 
-        end
-
-        puts "<<< #{entry}"
-        
-        # if episodename is empty than query plugins
-        if epi.episodename.match(/\w+/).nil? || options[:ignore_filenamedata]
-    
-            Serienrenamer::Pluginbase.registered_plugins.each do |plugin|  
-                # skip plugins that are not feasable
-                next unless plugin.usable
-                next unless plugin.respond_to?(:generate_episode_information)
-                if options[:plugin]
-                    next unless plugin.plugin_name.match(/#{options[:plugin]}/i)
-                end
-
-                # configure cleanup
-                clean_data, extract_seriesname = false, false
-                case plugin.plugin_name
-                when "Textfile"
-                    clean_data, extract_seriesname = true, true
-                when "SerienjunkiesOrgFeed"
-                    clean_data = true                    
-                end
-
-                extract_seriesname = false if options[:series]
-
-                # ask plugin for information
-                epiname = plugin.generate_episode_information(epi)[0]
-                next if epiname == nil
-
-                puts "[#{plugin.plugin_name}] - #{epiname}"
-
-                epi.add_episode_information(epiname, clean_data, extract_seriesname)
-                next unless epi.episodename.match(/\w+/)
-
-                break
-            end
-        end
-
-        puts ">>> #{epi.to_s}"
-        
-        print "Filename okay ([jy]/n): "
-        char = get_character
-        print char.chr
-
-        unless char.chr.match(/[jy\r]/i)
-            puts "\nwill be skipped ...\n\n"
-            next
-        end
-
-        info_storage.store(epi) if config[:store_episode_info]
-
-        puts "\n\n"
-
-        epi.rename()
+    # skip files that already have the right format
+    unless options[:process_all_files]
+      next if entry.match(/^S\d+E\d+.-.\w+.*\.\w+$/)
     end
 
+    begin
+      epi = Serienrenamer::Episode.new(entry)
+      if options[:series]
+        epi.series = options[:series]
+      end
+    rescue => e
+      next
+    end
+
+    puts "<<< #{entry}"
+
+    # if episodename is empty than query plugins
+    if epi.episodename.match(/\w+/).nil? || options[:ignore_filenamedata]
+
+      Serienrenamer::Pluginbase.registered_plugins.each do |plugin|
+        # skip plugins that are not feasable
+        next unless plugin.usable
+        next unless plugin.respond_to?(:generate_episode_information)
+        if options[:plugin]
+          next unless plugin.plugin_name.match(/#{options[:plugin]}/i)
+        end
+
+        # configure cleanup
+        clean_data, extract_seriesname = false, false
+        case plugin.plugin_name
+        when "Textfile"
+          clean_data, extract_seriesname = true, true
+        when "SerienjunkiesOrgFeed"
+          clean_data = true
+        when "SerienjunkiesOrg"
+          clean_data = true
+        end
+
+        extract_seriesname = false if options[:series]
+
+        # ask plugin for information
+        epiname = plugin.generate_episode_information(epi)[0]
+        next if epiname == nil
+
+        puts "[#{plugin.plugin_name}] - #{epiname}"
+
+        epi.add_episode_information(epiname, clean_data, extract_seriesname)
+        next unless epi.episodename.match(/\w+/)
+
+        break
+      end
+    end
+
+    puts ">>> #{epi.to_s}"
+
+    print "Filename okay ([jy]/n): "
+    char = get_character
+    print char.chr
+
+    unless char.chr.match(/[jy\r]/i)
+      puts "\nwill be skipped ...\n\n"
+      next
+    end
+
+    info_storage.store(epi) if config[:store_episode_info]
+
+    puts "\n\n"
+
+    epi.rename()
+  end
+
 rescue Interrupt => e
-    puts
+  puts
 ensure
-    info_storage.write() if config[:store_episode_info]
+  info_storage.write() if config[:store_episode_info]
 end

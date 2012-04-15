@@ -11,7 +11,7 @@ module Plugin
 
         def self.plugin_name; "SerienjunkiesOrgFeed" end
         def self.usable; true end
-        def self.priority; 10 end
+        def self.priority; 80 end
 
         @feed_url = 'http://serienjunkies.org/xml/feeds/episoden.xml'
 

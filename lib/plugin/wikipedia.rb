@@ -11,7 +11,7 @@ module Plugin
 
         def self.plugin_name; "Wikipedia" end
         def self.usable; true end
-        def self.priority; 5 end
+        def self.priority; 30 end
 
         @@WIKIPEDIA_URL = 'http://de.wikipedia.org/w/api.php'
 

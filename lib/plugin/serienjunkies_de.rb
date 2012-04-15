@@ -12,7 +12,7 @@ module Plugin
         def self.plugin_name; "SerienjunkiesDe" end
         def self.plugin_url; "http://serienjunkies.de" end
         def self.usable; true end
-        def self.priority; 4 end
+        def self.priority; 50 end
 
         # this method will be called from the main program
         # with an Serienrenamer::Episode instance as parameter

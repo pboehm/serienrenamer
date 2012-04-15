@@ -13,7 +13,7 @@ module Plugin
     def self.plugin_name; "SerienjunkiesOrg" end
     def self.plugin_url; "http://serienjunkies.org" end
     def self.usable; true end
-    def self.priority; 10 end
+    def self.priority; 60 end
 
     # Public: tries to search for an appropriate episodename
     #
