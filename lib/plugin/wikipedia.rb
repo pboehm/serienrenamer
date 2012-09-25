@@ -52,7 +52,7 @@ module Plugin
                 search_pattern_modified = false
 
                 begin
-                    wiki.search(search_pattern, nil, 50).each do |title|
+                    wiki.search(search_pattern, nil, 15).each do |title|
                         pagedata = wiki.get(title)
                         if is_series_main_page?(pagedata)
                             series_site = title

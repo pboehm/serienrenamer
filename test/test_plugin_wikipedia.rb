@@ -82,20 +82,6 @@ class TestPluginWikipedia < Test::Unit::TestCase
       assert_equal("Doppelgänger", seasons[1][6])
       assert_equal("Unruhiges Blut", seasons[1][9])
 
-      data = wiki.get("Royal Pains")
-      seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
-
-      assert_equal("Auch Reiche sind nur Menschen", seasons[1][1])
-      assert_equal("Krank vor Liebe", seasons[2][2])
-      assert_equal("Mich trifft der Blitz", seasons[2][16])
-
-      data = wiki.get("Flashpoint – Das Spezialkommando")
-      seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
-
-      assert_equal("Skorpion", seasons[1][1])
-      assert_equal("Die Festung", seasons[2][2])
-      assert_equal("Der Beschützer", seasons[2][16])
-
       data = wiki.get("Dr. Dani Santino – Spiel des Lebens")
       seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
 
@@ -115,11 +101,6 @@ class TestPluginWikipedia < Test::Unit::TestCase
   def test_episode_information_generation
 
     VCR.use_cassette("wiki_#{method_name}") do
-      flpo = Serienrenamer::Episode.new(@@files['flpo'])
-      data = Plugin::Wikipedia.generate_episode_information(flpo)[0]
-      flpo.add_episode_information(data, false) if data
-      assert_equal("S04E04 - Getrübte Erinnerungen.avi", flpo.to_s)
-
       two = Serienrenamer::Episode.new(@@files['two'])
       data = Plugin::Wikipedia.generate_episode_information(two)[0]
       two.add_episode_information(data, false) if data
@@ -187,7 +168,7 @@ class TestPluginWikipedia < Test::Unit::TestCase
 
       assert_equal(false, Plugin::Wikipedia.contains_inarticle_episode_list?(wiki.get("Bones")))
       assert_equal(true,  Plugin::Wikipedia.contains_inarticle_episode_list?(wiki.get("The Glades")))
-      assert_equal(true,  Plugin::Wikipedia.contains_inarticle_episode_list?(wiki.get("Royal Pains")))
+      assert_equal(false,  Plugin::Wikipedia.contains_inarticle_episode_list?(wiki.get("Royal Pains")))
     end
 
   end
