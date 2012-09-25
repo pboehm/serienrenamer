@@ -27,18 +27,18 @@ module Serienrenamer
 
         # trash words that are removed from the episodename
         @@TRASH_WORDS = %w(
-            German Dubbed DVDRip HDTVRip XviD ITG TVR inspired HDRip
-            AMBiTiOUS RSG SiGHT SATRip WS TVS RiP READ GERMAN dTV aTV
-            iNTERNAL CRoW MSE c0nFuSed UTOPiA scum EXPiRED BDRiP HDTV
-            iTunesHD 720p x264 h264 CRiSP euHD WEBRiP ZZGtv ARCHiV DD20
-            Prim3time Nfo Repack SiMPTY BLURAYRiP BluRay DELiCiOUS Synced
-            UNDELiCiOUS fBi CiD iTunesHDRip RedSeven OiNK idTV DL DD51 AC3
+            German Dubbed DVDRip HDTVRip XviD ITG TVR inspired HDRip AMBiTiOUS
+            RSG SiGHT SATRip WS TVS RiP READ GERMAN dTV aTV iNTERNAL CRoW MSE
+            c0nFuSed UTOPiA scum EXPiRED BDRiP HDTV iTunesHD 720p x264 h264
+            CRiSP euHD WEBRiP ZZGtv ARCHiV DD20 Prim3time Nfo Repack SiMPTY
+            BLURAYRiP BluRay DELiCiOUS Synced UNDELiCiOUS fBi CiD iTunesHDRip
+            RedSeven OiNK idTV DL DD51 AC3 1080p
         )
 
         # Constructor for the Episode-Class, which takes an episode as
         # argument and extracts as much as information from the file
         # that it can.
-        def initialize(episodepath, episodename_needed=true)
+        def initialize(episodepath, episodename_needed=true, trash_words=[])
 
             raise ArgumentError, 'no episodepath provided' unless episodepath
 
@@ -50,6 +50,9 @@ module Serienrenamer
             unless Episode.determine_video_file(episodepath)
                 raise ArgumentError, 'no videofile found'
             end
+
+            # merge trash-words from caller with standard trash words
+            @@TRASH_WORDS = @@TRASH_WORDS.zip(trash_words).flatten.compact
 
             @source_directory = nil
 

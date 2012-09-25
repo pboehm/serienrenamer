@@ -121,7 +121,7 @@ begin
     end
 
     begin
-      epi = Serienrenamer::Episode.new(entry)
+      epi = Serienrenamer::Episode.new(entry, true, config[:illegal_words])
       if options[:series]
         epi.series = options[:series]
       end
