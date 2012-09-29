@@ -3,10 +3,10 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 
 module Serienrenamer
-    VERSION = '0.0.11'
 
     require 'serienrenamer/episode.rb'
     require 'serienrenamer/information_store.rb'
+    require 'serienrenamer/version.rb'
 
     class Pluginbase
 
