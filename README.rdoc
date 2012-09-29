@@ -1,4 +1,4 @@
-= serienrenamer {<img src="https://secure.travis-ci.org/pboehm/serienrenamer.png" />}[http://travis-ci.org/pboehm/serienrenamer
+= serienrenamer {<img src="https://secure.travis-ci.org/pboehm/serienrenamer.png" />}[http://travis-ci.org/pboehm/serienrenamer]
 
 * http://github.com/pboehm/serienrenamer
 
