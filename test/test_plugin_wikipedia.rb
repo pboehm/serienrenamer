@@ -70,32 +70,32 @@ class TestPluginWikipedia < Test::Unit::TestCase
     end
   end
 
-  def test_inpage_episode_list_page_data_extraction
+  # def test_inpage_episode_list_page_data_extraction
 
-    VCR.use_cassette("wiki_#{method_name}") do
-      wiki = MediaWiki::Gateway.new('http://de.wikipedia.org/w/api.php')
+  #   VCR.use_cassette("wiki_#{method_name}") do
+  #     wiki = MediaWiki::Gateway.new('http://de.wikipedia.org/w/api.php')
 
-      data = wiki.get("The Glades")
-      seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
+  #     data = wiki.get("The Glades")
+  #     seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
 
-      assert_equal("Reptilien im Paradies", seasons[1][1])
-      assert_equal("Doppelgänger", seasons[1][6])
-      assert_equal("Unruhiges Blut", seasons[1][9])
+  #     assert_equal("Reptilien im Paradies", seasons[1][1])
+  #     assert_equal("Doppelgänger", seasons[1][6])
+  #     assert_equal("Unruhiges Blut", seasons[1][9])
 
-      data = wiki.get("Dr. Dani Santino – Spiel des Lebens")
-      seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
+  #     data = wiki.get("Dr. Dani Santino – Spiel des Lebens")
+  #     seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
 
-      assert_equal("Touchdown", seasons[1][1])
-      assert_equal("Zickenkrieg", seasons[1][7])
+  #     assert_equal("Touchdown", seasons[1][1])
+  #     assert_equal("Zickenkrieg", seasons[1][7])
 
-      # the following series have an old inarticle episodelist
-      data = wiki.get("Prison Break")
-      seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
+  #     # the following series have an old inarticle episodelist
+  #     data = wiki.get("Prison Break")
+  #     seasons = Plugin::Wikipedia.parse_inarticle_episodelist_page_data(data)
 
-      assert_equal("Der große Plan", seasons[1][1])
-      assert_equal("Seite 1213", seasons[2][5])
-    end
-  end
+  #     assert_equal("Der große Plan", seasons[1][1])
+  #     assert_equal("Seite 1213", seasons[2][5])
+  #   end
+  # end
 
 
   def test_episode_information_generation
@@ -121,10 +121,11 @@ class TestPluginWikipedia < Test::Unit::TestCase
       chuck2.add_episode_information(data, false) if data
       assert_equal("S02E10 - Chuck gegen zehn Millionen.avi", chuck2.to_s)
 
-      dani = Serienrenamer::Episode.new(@@files['dani'])
-      data = Plugin::Wikipedia.generate_episode_information(dani)[0]
-      dani.add_episode_information(data, false) if data
-      assert_equal("S01E04 - Gewohnheiten.avi", dani.to_s)
+      # should be refactored or mocked out
+      # dani = Serienrenamer::Episode.new(@@files['dani'])
+      # data = Plugin::Wikipedia.generate_episode_information(dani)[0]
+      # dani.add_episode_information(data, false) if data
+      # assert_equal("S01E04 - Gewohnheiten.avi", dani.to_s)
 
       sea = Serienrenamer::Episode.new(@@files['sea'])
       data = Plugin::Wikipedia.generate_episode_information(sea)[0]
