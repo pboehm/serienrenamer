@@ -22,7 +22,7 @@ module Plugin
 
       if Serienrenamer::Episode.contains_episode_information?(path)
         if md = Serienrenamer::Episode.extract_episode_information(path)
-          episodename = "Episode %d" % [ md[:episode] ]
+          episodename = "Episode %d" % [ md[:episode].to_i ]
           matched_episodes << episodename
         end
       end
