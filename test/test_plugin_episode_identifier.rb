@@ -9,7 +9,7 @@ class TestPluginEpisodeIdentifier < Test::Unit::TestCase
   }
 
   def setup
-    @plugin = Plugin::EpisodeIdentifier
+    @plugin = Serienrenamer::Plugin::EpisodeIdentifier
     TestHelper.create_test_files(@@files.values)
     TestHelper.cwd
   end

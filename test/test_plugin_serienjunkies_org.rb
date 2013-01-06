@@ -21,7 +21,7 @@ class TestSerienjunkiesOrg < Test::Unit::TestCase
   def test_seriespage_url_search
 
     VCR.use_cassette("sjunkie_org_#{method_name}") do
-      plugin = Plugin::SerienjunkiesOrg
+      plugin = Serienrenamer::Plugin::SerienjunkiesOrg
 
       misfits = plugin.find_link_to_series_page("Misfits")
       assert_equal("http://serienjunkies.org/serie/misfits/", misfits)
@@ -37,7 +37,7 @@ class TestSerienjunkiesOrg < Test::Unit::TestCase
   def test_parse_seriespage
 
     VCR.use_cassette("sjunkie_org_#{method_name}") do
-      plugin = Plugin::SerienjunkiesOrg
+      plugin = Serienrenamer::Plugin::SerienjunkiesOrg
 
       seasons = plugin.parse_seriespage(
         "http://serienjunkies.org/royal-pains/")
@@ -58,7 +58,7 @@ class TestSerienjunkiesOrg < Test::Unit::TestCase
   def test_episode_information_generation
 
     VCR.use_cassette("sjunkie_org_#{method_name}") do
-      plugin = Plugin::SerienjunkiesOrg
+      plugin = Serienrenamer::Plugin::SerienjunkiesOrg
 
       flpo = Serienrenamer::Episode.new(@@files['flpo'])
       data = plugin.generate_episode_information(flpo)[0]

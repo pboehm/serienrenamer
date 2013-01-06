@@ -21,7 +21,7 @@ class TestPluginSerienjunkiesFeed < Test::Unit::TestCase
 
   def setup
     unless defined? @feed
-      @feed = Plugin::SerienjunkiesOrgFeed
+      @feed = Serienrenamer::Plugin::SerienjunkiesOrgFeed
       @feed.feed_url = File.join( File.dirname(__FILE__),
                                  'serienjunkies_feed_sample.xml')
     end
