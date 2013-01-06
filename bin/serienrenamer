@@ -5,7 +5,6 @@
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'serienrenamer'
-require 'plugin'
 require 'optparse'
 require 'fileutils'
 require 'hashconfig'
@@ -85,11 +84,6 @@ opts.separator("")
 
 rest = opts.permute(ARGV)
 
-###
-# Load plugins #
-Dir[File.join(File.dirname(__FILE__),"../lib/plugin/*.rb")].each do |plugin|
-  load plugin
-end
 Serienrenamer::Pluginbase.registered_plugins.sort! {|x,y| y.priority <=> x.priority }
 
 puts "Plugins loaded: #{Serienrenamer::Pluginbase.registered_plugins.inspect}"
