@@ -1,6 +1,7 @@
 # encoding: UTF-8
 require File.dirname(__FILE__) + '/test_helper.rb'
 require 'fileutils'
+require 'tempfile'
 
 class TestInformationStore < Test::Unit::TestCase
 
@@ -12,6 +13,8 @@ class TestInformationStore < Test::Unit::TestCase
   }
 
   def setup
+
+    @empty_file = Tempfile.new('information_storage')
 
     VCR.use_cassette("info_store_#{method_name}") do
       TestHelper.create_test_files(@@files.values)
@@ -46,6 +49,12 @@ class TestInformationStore < Test::Unit::TestCase
     @episodes.each do |key, episode|
       assert_equal(storage.episode_hash[episode.md5sum], episode.series)
     end
+  end
+
+  def test_that_an_empty_information_storage_is_built_up_right
+
+    storage = Serienrenamer::InformationStore.new(@empty_file.path)
+    assert_equal storage.episode_hash, Hash.new
   end
 
 end

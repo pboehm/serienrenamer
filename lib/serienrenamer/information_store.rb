@@ -16,7 +16,10 @@ module Serienrenamer
             @episode_hash = {}
 
             if File.file?(yaml_path)
-                @episode_hash = YAML.load(File.new(yaml_path, "rb").read)
+                serialized = YAML.load(File.new(yaml_path, "rb").read)
+                if serialized.is_a?(Hash)
+                  @episode_hash = serialized
+                end
             end
         end
 
