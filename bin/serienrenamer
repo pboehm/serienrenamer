@@ -25,6 +25,7 @@ STANDARD_CONFIG = {
   :store_path         => File.join(CONFIG_DIR, "information_storage.yml"),
   :byte_count_for_md5 => 2048,
   :illegal_words      => %w{ ML },
+  :disabled_plugins   => %w{ NOT_REALLY_A_PLUGIN },
 }
 
 config = STANDARD_CONFIG.merge_with_serialized(CONFIG_FILE)
@@ -84,10 +85,21 @@ opts.separator("")
 
 rest = opts.permute(ARGV)
 
-Serienrenamer::Pluginbase.registered_plugins.sort! {|x,y| y.priority <=> x.priority }
+####
+# get all plugins, reject disbled plugins and order them by their priority
+registered_plugins = Serienrenamer::Pluginbase.registered_plugins
 
-puts "Plugins loaded: #{Serienrenamer::Pluginbase.registered_plugins.inspect}"
-puts ""
+registered_plugins.reject! { |plugin|
+    config[:disabled_plugins].include? plugin.to_s || ! plugin.usable }
+
+if options[:plugin]  # only leave the wanted plugin
+    registered_plugins.reject! { |plugin| plugin.to_s !~ /#{options[:plugin]}/i }
+end
+
+registered_plugins.sort! {|x,y| y.priority <=> x.priority }
+
+puts "Plugins loaded: #{registered_plugins.inspect}\n\n"
+
 
 # change into DIR
 episode_directory = rest.pop || config[:default_directory]
@@ -128,13 +140,7 @@ begin
     # if episodename is empty than query plugins
     if epi.episodename.match(/\w+/).nil? || options[:ignore_filenamedata]
 
-      Serienrenamer::Pluginbase.registered_plugins.each do |plugin|
-        # skip plugins that are not feasable
-        next unless plugin.usable
-        next unless plugin.respond_to?(:generate_episode_information)
-        if options[:plugin]
-          next unless plugin.plugin_name.match(/#{options[:plugin]}/i)
-        end
+      registered_plugins.each do |plugin|
 
         # configure cleanup
         clean_data, extract_seriesname = false, false
