@@ -21,7 +21,7 @@ FileUtils.mkdir(CONFIG_DIR) unless File.directory?(CONFIG_DIR)
 # configuration
 STANDARD_CONFIG = {
   :default_directory  => File.join(File.expand_path("~"), "Downloads"),
-  :store_episode_info => false,
+  :store_episode_info => true,
   :store_path         => File.join(CONFIG_DIR, "information_storage.yml"),
   :byte_count_for_md5 => 2048,
   :illegal_words      => %w{ ML },
@@ -150,10 +150,13 @@ begin
         extract_seriesname = false if options[:series]
 
         # ask plugin for information
+        print "\rAsking '#{ plugin }' for episode information #{' ' * 10}"
+        $stdout.flush
+
         epiname = plugin.generate_episode_information(epi)[0]
         next if epiname == nil
 
-        puts "[#{plugin.plugin_name}] - #{epiname}"
+        puts "\n[#{plugin.plugin_name}] - #{epiname}"
 
         epi.add_episode_information(epiname, clean_data, extract_seriesname)
         next unless epi.episodename.match(/\w+/)
@@ -166,9 +169,8 @@ begin
 
     print "Filename okay ([jy]/n): "
     char = get_character
-    print char.chr
 
-    unless char.chr.match(/[jy\r]/i)
+    unless char.chr.match(/[jy\r\n]/i)
       puts "\nwill be skipped ...\n\n"
       next
     end

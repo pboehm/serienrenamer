@@ -17,6 +17,11 @@ module Serienrenamer
     def self.to_s
       self.plugin_name
     end
+
+    # Is required because Ruby 2.0 prints the whole fully qualified class name
+    def self.inspect
+      return self.to_s
+    end
   end
 
   # include all existing plugins
