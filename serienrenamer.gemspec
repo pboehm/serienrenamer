@@ -16,8 +16,7 @@ Gem::Specification.new do |gem|
   gem.version       = Serienrenamer::VERSION
 
   gem.required_ruby_version = '>= 1.9.0'
-  gem.add_runtime_dependency(%q<wlapi>, [">= 0.8.4"])
-  gem.add_runtime_dependency(%q<savon>, ["~> 0.8.4"])
+  gem.add_runtime_dependency(%q<wlapi>, [">= 0.8.5"])
   gem.add_runtime_dependency(%q<mediawiki-gateway>, [">= 0.4.4"])
   gem.add_runtime_dependency(%q<mechanize>, [">= 2.3"])
   gem.add_runtime_dependency(%q<highline>, [">= 1.6.11"])

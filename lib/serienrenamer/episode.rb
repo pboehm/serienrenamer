@@ -5,9 +5,6 @@ require 'wlapi'
 require 'digest/md5'
 
 # suppress debug messages from wlapi which uses Savon
-Savon.configure do |config|
-  config.log = false
-end
 HTTPI.log = false
 
 
