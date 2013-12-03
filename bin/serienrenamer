@@ -26,6 +26,7 @@ STANDARD_CONFIG = {
   :byte_count_for_md5 => 2048,
   :illegal_words      => %w{ ML },
   :disabled_plugins   => %w{ NOT_REALLY_A_PLUGIN },
+  :force_rename       => false,
 }
 
 config = STANDARD_CONFIG.merge_with_serialized(CONFIG_FILE)
@@ -63,6 +64,11 @@ end
 opts.on( "-a", "--[no-]all",
         "Process all files (including right formatted files)") do |opt|
   options[:process_all_files] = opt
+end
+
+opts.on( "-f", "--force",
+         "Force rename") do |opt|
+  options[:force_rename] = opt
 end
 
 opts.on( "--showconfig", "Prints the current configuration.") do |opt|
@@ -173,13 +179,18 @@ begin
 
     puts ">>> #{epi.to_s}"
 
-    print "Filename okay ([jy]/n): "
-    char = get_character
+    if not options[:force_rename]
 
-    unless char.chr.match(/[jy\r\n]/i)
-      puts "\nwill be skipped ...\n\n"
-      next
+      print "Filename okay ([jy]/n): "
+      char = get_character
+
+      unless char.chr.match(/[jy\r\n]/i)
+        puts "\nwill be skipped ...\n\n"
+        next
+      end
+      
     end
+
 
     info_storage.store(epi) if config[:store_episode_info]
 
