@@ -68,7 +68,7 @@ end
 
 opts.on( "-f", "--force",
          "Force rename") do |opt|
-  options[:force_rename] = opt
+  config[:force_rename] = opt
 end
 
 opts.on( "--showconfig", "Prints the current configuration.") do |opt|
@@ -179,7 +179,7 @@ begin
 
     puts ">>> #{epi.to_s}"
 
-    if not options[:force_rename]
+    if not config[:force_rename]
 
       print "Filename okay ([jy]/n): "
       char = get_character
@@ -188,7 +188,7 @@ begin
         puts "\nwill be skipped ...\n\n"
         next
       end
-      
+
     end
 
 
