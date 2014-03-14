@@ -38,28 +38,22 @@ class TestPluginTextfile < Test::Unit::TestCase
   end
 
   def test_information_extraction
-    VCR.use_cassette("textfile_#{method_name}") do
-      how = Serienrenamer::Episode.new(@@directories['hmym'])
-      data = Serienrenamer::Plugin::Textfile.generate_episode_information(how)[0]
-      how.add_episode_information(data, true)
-      assert_equal("S07E05 - Die Exkursion.avi", how.to_s)
-    end
+    how = Serienrenamer::Episode.new(@@directories['hmym'])
+    data = Serienrenamer::Plugin::Textfile.generate_episode_information(how)[0]
+    how.add_episode_information(data, true)
+    assert_equal("S07E05 - Die Exkursion.avi", how.to_s)
   end
 
   def test_select_right_textfile
-    VCR.use_cassette("textfile_#{method_name}") do
-      how = Serienrenamer::Episode.new(@@directories['hmmg'])
-      data = Serienrenamer::Plugin::Textfile.generate_episode_information(how)[0]
-      how.add_episode_information(data, true)
-      assert_equal("S07E11 - Plan B.avi", how.to_s)
-    end
+    how = Serienrenamer::Episode.new(@@directories['hmmg'])
+    data = Serienrenamer::Plugin::Textfile.generate_episode_information(how)[0]
+    how.add_episode_information(data, true)
+    assert_equal("S07E11 - Plan B.avi", how.to_s)
   end
 
   def test_information_extraction_with_directory_parameter
-    VCR.use_cassette("textfile_#{method_name}") do
-      how = @@directories['hmym']
-      data = Serienrenamer::Plugin::Textfile.generate_episode_information(how)[0]
-      assert_not_nil(data)
-    end
+    how = @@directories['hmym']
+    data = Serienrenamer::Plugin::Textfile.generate_episode_information(how)[0]
+    assert_not_nil(data)
   end
 end

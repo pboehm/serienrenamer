@@ -16,26 +16,23 @@ class TestInformationStore < Test::Unit::TestCase
 
     @empty_file = Tempfile.new('information_storage')
 
-    VCR.use_cassette("info_store_#{method_name}") do
-      TestHelper.create_test_files(@@files.values)
-      TestHelper.cwd
+    TestHelper.create_test_files(@@files.values)
+    TestHelper.cwd
 
-      @episodes = Hash.new
-      storage = Serienrenamer::InformationStore.new("storage.yml")
+    @episodes = Hash.new
+    storage = Serienrenamer::InformationStore.new("storage.yml")
 
-      @@files.each do |key, value|
-        filenametxt = File.new(value, "w")
-        filenametxt.write(value)
-        filenametxt.close
+    @@files.each do |key, value|
+      filenametxt = File.new(value, "w")
+      filenametxt.write(value)
+      filenametxt.close
 
-        episode = Serienrenamer::Episode.new(value)
-        episode.rename
-        @episodes[key] = episode
-        storage.store(episode)
-      end
-      storage.write
+      episode = Serienrenamer::Episode.new(value)
+      episode.rename
+      @episodes[key] = episode
+      storage.store(episode)
     end
-
+    storage.write
   end
 
   def teardown

@@ -1,12 +1,7 @@
 # coding: UTF-8
 require 'find'
 require 'fileutils'
-require 'wlapi'
 require 'digest/md5'
-
-# suppress debug messages from wlapi which uses Savon
-HTTPI.log = false
-
 
 module Serienrenamer
 
@@ -196,10 +191,7 @@ module Serienrenamer
         #   :include_trashwords
         #       remove Words like German or Dubbed from
         #       the string (Trashwords)
-        #   :repair_umlauts
-        #       try to repair broken umlauts if they occur
-        #
-        def self.clean_episode_data(data, include_trashwords=false, repair_umlauts=false)
+        def self.clean_episode_data(data, include_trashwords=false, *args)
             data.gsub!(/\./, " ")
             data.gsub!(/\_/, " ")
             data.gsub!(/\-/, " ")
@@ -216,8 +208,6 @@ module Serienrenamer
 
                 for word in data.split(/ /) do
                     next unless word.match(/\w+/)
-
-                    word = repair_umlauts(word) if repair_umlauts
 
                     # if word is in TRASH_WORDS
                     if ! @@TRASH_WORDS.grep(/^#{word}$/i).empty?
@@ -239,51 +229,6 @@ module Serienrenamer
             return data
         end
 
-        # This method tries to repair some german umlauts so that
-        # the following occurs
-        #
-        # ae => ä ; ue => ü ; oe => ö ; Ae => Ä ; Ue => Ü ; Oe => Ö
-        #
-        # This method uses a webservice at:
-        #   http://wortschatz.uni-leipzig.de/
-        # which produces statistics about the german language and
-        # e.g. frequency of words occuring in the german language
-        #
-        # this method convert all broken umlauts in the word and compares
-        # the frequency of both version and uses the version which is more
-        # common
-        #
-        # returns an repaired version of the word if necessary
-        def self.repair_umlauts(word)
-
-            if contains_eventual_broken_umlauts?(word)
-
-                repaired = word.gsub(/ae/, 'ä').gsub(/ue/, 'ü').gsub(/oe/, 'ö')
-                repaired.gsub!(/^Ae/, 'Ä')
-                repaired.gsub!(/^Ue/, 'Ü')
-                repaired.gsub!(/^Oe/, 'Ö')
-
-                ws = WLAPI::API.new
-
-                res_broken  = ws.frequencies(word)
-                freq_broken = res_broken.nil? ? -1 : res_broken[0].to_i
-
-                res_repaired  = ws.frequencies(repaired)
-                freq_repaired = res_repaired.nil? ? -1 : res_repaired[0].to_i
-
-                if freq_repaired > freq_broken
-                    return repaired
-                end
-            end
-            return word
-        end
-
-        # checks for eventual broken umlauts
-        #
-        # returns true if broken umlaut if included
-        def self.contains_eventual_broken_umlauts?(string)
-            ! string.match(/ae|ue|oe|Ae|Ue|Oe/).nil?
-        end
 
         # tries to match the given string against
         # all supported regex-patterns and returns true if a
