@@ -4,12 +4,11 @@ require 'fileutils'
 require 'digest/md5'
 
 module Serienrenamer
-
     class Episode
 
-        attr_reader :season, :episode, :episodename,
+        attr_reader :season, :episode,
             :extension, :episodepath, :success, :source_directory
-        attr_accessor :episodename_needed, :series
+        attr_accessor :episodename, :episodename_needed, :series
 
         # patterns for suitable episodes
         @@PATTERNS = [

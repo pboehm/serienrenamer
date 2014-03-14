@@ -3,7 +3,7 @@ require File.expand_path('../lib/serienrenamer/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Philipp Böhm"]
-  gem.email         = ["philipp@i77i.de"]
+  gem.email         = ["dev@pboehm.org"]
   gem.description   = %q{Ruby Script that brings your series into an appropriate format like \"S01E01 - Episodename.avi\"}
   gem.summary       = %q{Ruby Script that brings your series into an appropriate format like \"S01E01 - Episodename.avi\"}
   gem.homepage      = "http://github.com/pboehm/serienrenamer"

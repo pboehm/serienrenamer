@@ -13,6 +13,7 @@ module Serienrenamer
     end
 
     def self.plugin_name; "PluginBase" end
+    def self.type; :information end        # or :filter
 
     def self.to_s
       self.plugin_name

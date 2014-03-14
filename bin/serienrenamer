@@ -146,7 +146,7 @@ begin
     # if episodename is empty than query plugins
     if epi.episodename.match(/\w+/).nil? || options[:ignore_filenamedata]
 
-      registered_plugins.each do |plugin|
+      registered_plugins.select {|p| p.type == :information}.each do |plugin|
 
         # configure cleanup
         clean_data, extract_seriesname = false, false
@@ -177,6 +177,12 @@ begin
       end
     end
 
+    # filter episode name
+    registered_plugins.select {|p| p.type == :filter}.each do |plugin|
+        epi.episodename = plugin.filter(epi.episodename)
+    end
+
+    # rename episode when the user confirms
     puts ">>> #{epi.to_s}"
 
     if not config[:force_rename]

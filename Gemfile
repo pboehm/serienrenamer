@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem "vcr"
+gem "vcr", "~> 2.4"
 gem "fakeweb"
 gem "rake"
 
