@@ -36,6 +36,8 @@ module Serienrenamer
           # an check if they contain episode information
           Dir.new(sourcedir).each do |e|
             file = File.join(sourcedir, e)
+
+            next unless File.file? file
             next if File.size(file) > 128 || File.zero?(file)
 
             data = File.open(file, "rb").read
